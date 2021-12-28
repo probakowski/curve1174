@@ -1,4 +1,5 @@
-//+build !purego
+//go:build !purego
+// +build !purego
 
 package curve1174
 
@@ -8,7 +9,7 @@ var cpuSupported = cpuid.CPU.BMI2() && cpuid.CPU.ADX()
 
 // res=x * y % 2^251-9
 //go:noescape
-func mul(res uintptr, x uintptr, y uintptr)
+func mul(res *FieldElement, x *FieldElement, y *FieldElement)
 
 // res=x * y % 2^251-9
 //go:noescape

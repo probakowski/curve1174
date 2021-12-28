@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"testing"
 	"time"
-	"unsafe"
 )
 
 func TestAddingNeutralElement(t *testing.T) {
@@ -54,7 +53,8 @@ func TestDoubling(t *testing.T) {
 
 func TestSpecificScalarBaseMult(t *testing.T) {
 	PrecomputeBase()
-	vectors := []string{"1", "2", "3", "16", "17", "256"}
+	vectors := []string{"0", "1", "2", "3", "16", "17", "256", "257", "1050", "1000000006",
+		"45073459087905739457391209340239423224234234457"}
 	for _, vector := range vectors {
 		b2, _ := new(big.Int).SetString(vector, 10)
 		b := FromBigInt(b2)
@@ -69,16 +69,16 @@ func TestSpecificScalarBaseMult(t *testing.T) {
 
 func TestScalarBaseMult(t *testing.T) {
 	PrecomputeBase()
-	randomTest(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
+	randomTestOp(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
 		var p Point
-		p.ScalarBaseMult(x)
+		p.ScalarBaseMult(x).ToAffine(&p)
 		res.Set(&p.X)
 	}, func(res *big.Int, x *big.Int, y *big.Int) {
 		a := FromBigInt(x)
 		var p Point
-		p.ScalarMult(UBase, a)
+		p.ScalarMult(UBase, a).ToAffine(&p)
 		res.Set(p.X.ToBigInt())
-	})
+	}, 10000)
 }
 
 func TestScalarMult(t *testing.T) {
@@ -113,7 +113,7 @@ func TestSub(t *testing.T) {
 
 func TestMul(t *testing.T) {
 	randomTest(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
-		mul(uintptr(unsafe.Pointer(res)), uintptr(unsafe.Pointer(x)), uintptr(unsafe.Pointer(y)))
+		mul(res, x, y)
 	}, func(res *big.Int, x *big.Int, y *big.Int) {
 		res.Mul(x, y)
 	})
@@ -178,7 +178,7 @@ func TestSpecificMul(t *testing.T) {
 		p := FromBigInt(b1)
 		p2 := FromBigInt(b2)
 		var res FieldElement
-		mul(uintptr(unsafe.Pointer(&res)), uintptr(unsafe.Pointer(p2)), uintptr(unsafe.Pointer(p)))
+		mul(&res, p2, p)
 		b4 := res.ToBigInt()
 		if b4.Cmp(b3) != 0 {
 			t.Errorf("\n%x\n%x\n%x\n%x", b1, b2, b3, b4)
@@ -194,7 +194,7 @@ func TestMod(t *testing.T) {
 	})
 }
 
-func TestSelectAsm(t *testing.T) {
+func TestSelect(t *testing.T) {
 	var points [16]Point
 	var res Point
 	for i := 0; i < 16; i++ {
@@ -208,7 +208,7 @@ func TestSelectAsm(t *testing.T) {
 	for i := 0; i < 16; i++ {
 		selectPoint(&res, &points, uint64(i))
 		if !res.Equals(&points[i]) {
-			t.Errorf("%x\n%x", res, points[i])
+			t.Errorf("\n%x\n%x", res, points[i])
 		}
 	}
 }
@@ -218,9 +218,16 @@ const TestsCount = 1000000
 func randomTest(t *testing.T,
 	fieldFunc func(res *FieldElement, x *FieldElement, y *FieldElement),
 	bigIntFunc func(res *big.Int, x *big.Int, y *big.Int)) {
+	randomTestOp(t, fieldFunc, bigIntFunc, TestsCount)
+}
+
+func randomTestOp(t *testing.T,
+	fieldFunc func(res *FieldElement, x *FieldElement, y *FieldElement),
+	bigIntFunc func(res *big.Int, x *big.Int, y *big.Int),
+	testsCount int) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	fails := 0
-	for i := 0; i < TestsCount; i++ {
+	for i := 0; i < testsCount; i++ {
 		b1 := new(big.Int).Rand(r, P)
 		b2 := new(big.Int).Rand(r, P)
 		p := FromBigInt(b1)
@@ -250,11 +257,11 @@ func TestPrecompute(t *testing.T) {
 }
 
 func TestInverse(t *testing.T) {
-	randomTest(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
+	randomTestOp(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
 		res.Inverse(x)
 	}, func(res *big.Int, x *big.Int, y *big.Int) {
 		res.ModInverse(x, P)
-	})
+	}, 10000)
 }
 
 func TestFastInverse(t *testing.T) {

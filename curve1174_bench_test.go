@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"testing"
 	"time"
-	"unsafe"
 )
 
 var scalar, _ = new(big.Int).SetString("5ffffff23ffffffffffff1758603537581ffffffffffffffffffffffffffff7", 16)
@@ -34,7 +33,7 @@ func BenchmarkCurve1174ScalarMult(b *testing.B) {
 	f := FromBigInt(scalar)
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.ScalarMult(UBase, f)//.ToAffine(&p)
+		p.ScalarMult(UBase, f) //.ToAffine(&p)
 	}
 }
 
@@ -47,7 +46,7 @@ func BenchmarkCurve1174ScalarBaseMult(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.ScalarBaseMult(f)//.ToAffine(&p)
+		p.ScalarBaseMult(f) //.ToAffine(&p)
 	}
 	b.StopTimer()
 	pp = p
@@ -60,7 +59,7 @@ func BenchmarkCurve1174ScalarBaseMult2(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.ScalarBaseMult2(f)//.ToAffine(&p)
+		p.ScalarBaseMult2(f) //.ToAffine(&p)
 	}
 }
 
@@ -168,10 +167,13 @@ func BenchmarkInverse(b *testing.B) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	b2 := new(big.Int).Rand(r, P)
 	e := FromBigInt(b2)
+	var p Point
+	p.ScalarBaseMult(e)
 	b.ReportAllocs()
+	var ee FieldElement
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		e.Inverse(e)
+		ee.Inverse(&p.Z)
 	}
 }
 
@@ -189,9 +191,7 @@ func BenchmarkMul(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		for i := 0; i < 100; i++ {
-			mul(uintptr(unsafe.Pointer(&p3)), uintptr(unsafe.Pointer(&p)), uintptr(unsafe.Pointer(&p2)))
-		}
+		mul(&p3, &p, &p2)
 	}
 }
 
@@ -209,9 +209,7 @@ func BenchmarkMulSqr(b *testing.B) {
 	b.ReportAllocs()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		for i := 0; i < 100; i++ {
-			sqr(&p3, &p)
-		}
+		sqr(&p3, &p)
 	}
 }
 

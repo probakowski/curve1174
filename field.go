@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/big"
 	"math/bits"
-	"unsafe"
 )
 
 const P3 uint64 = 0x07ffffffffffffff
@@ -31,7 +30,7 @@ func (out *FieldElement) Mul2(p *FieldElement) *FieldElement {
 }
 
 func (out *FieldElement) Mul(p, p2 *FieldElement) *FieldElement {
-	mul(uintptr(unsafe.Pointer(out)), uintptr(unsafe.Pointer(p)), uintptr(unsafe.Pointer(p2)))
+	mul(out, p, p2)
 	return out
 }
 
@@ -101,6 +100,7 @@ func (out *FieldElement) FastInverse(p2 *FieldElement) *FieldElement {
 	d := FieldElement{1}
 	u.Set(UP)
 	v.Set(p2)
+
 	for !u.IsZero() {
 		for u.IsEven() {
 			if !b.IsEven() {

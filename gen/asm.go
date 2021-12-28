@@ -499,7 +499,7 @@ func mulq(x, y int) {
 func sqrFunc() {
 	TEXT("sqr", NOSPLIT, "func(res, x *FieldElement)")
 	Pragma("noescape")
-	Doc("res=x * y % 2^251-9")
+	Doc("res=x * x % 2^251-9")
 
 	//CMPB(Mem{Base: StaticBase, Symbol: Symbol{Name: "·cpuSupported"}}, U8(1))
 	//JNE(LabelRef("mulNoAdx"))
