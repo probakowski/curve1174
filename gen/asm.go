@@ -397,8 +397,8 @@ func subN() {
 func storeResults() {
 	Comment("Store results")
 	resPtr = Load(Param("res"), GP64())
-	for i := 4; i < 8; i++ {
-		MOVQ(regs[i], mem(resPtr, i-4))
+	for i := 0; i < 4; i++ {
+		MOVQ(regs[i], mem(resPtr, i))
 	}
 }
 
@@ -515,7 +515,7 @@ func sqrFunc() {
 	MOVQ(mem(xPtr, 3), x3)
 
 	Comment("clear flags")
-	XORQ(regs[7], regs[7])
+	XORQ(zero, zero)
 
 	Comment("fill registers")
 
@@ -558,7 +558,7 @@ func sqrFunc() {
 	ADCQ(lo, regs[6])
 	ADCQ(hi, regs[7])
 
-	//extendedMod()
+	extendedMod()
 
 	storeResults()
 
@@ -608,7 +608,7 @@ func mulFunc() {
 	mulAdd(0, 3)
 	carry(4, 8)
 
-	//extendedMod()
+	extendedMod()
 
 	storeResults()
 
@@ -654,9 +654,7 @@ func carry(start, end int) {
 
 	for i := start + 1; i < end; i++ {
 		ADOXQ(zero, regs[i])
-		if i < end-1 || (end-start)%2 == 0 {
-			ADCXQ(zero, regs[i])
-		}
+		ADCXQ(zero, regs[i])
 	}
 }
 

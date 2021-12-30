@@ -127,6 +127,9 @@ func (p *Point) ScalarBaseMult2(b *FieldElement) *Point {
 }
 
 func (p *Point) ScalarBaseMult(b *FieldElement) *Point {
+	if precomputed2 {
+		return p.ScalarBaseMult2(b)
+	}
 	if !precomputed {
 		return p.ScalarMult(UBase, b)
 	}

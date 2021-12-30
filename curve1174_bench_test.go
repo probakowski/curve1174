@@ -46,7 +46,7 @@ func BenchmarkCurve1174ScalarBaseMult(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.ScalarBaseMult(f) //.ToAffine(&p)
+		p.ScalarBaseMult(f).ToAffine(&p)
 	}
 	b.StopTimer()
 	pp = p
@@ -59,7 +59,7 @@ func BenchmarkCurve1174ScalarBaseMult2(b *testing.B) {
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.ScalarBaseMult2(f) //.ToAffine(&p)
+		p.ScalarBaseMult2(f).ToAffine(&p)
 	}
 }
 

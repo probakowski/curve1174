@@ -9,118 +9,165 @@
 TEXT ·mul(SB), NOSPLIT, $0-24
 	CMPB ·cpuSupported+0(SB), $0x01
 	JNE  mulNoAdx
-	MOVQ x+8(FP), AX
-	MOVQ y+16(FP), R11
+	MOVQ x+8(FP), R11
+	MOVQ y+16(FP), R12
 
 	// Fill all regs
-	MOVQ  24(AX), DX
-	MULXQ 8(R11), DI, R8
-	MULXQ 24(R11), R9, R10
-	MOVQ  (AX), DX
-	MULXQ (R11), CX, BX
-	MULXQ 16(R11), BP, SI
-	XORQ  CX, CX
+	MOVQ  24(R11), DX
+	MULXQ 8(R12), DI, R8
+	MULXQ 24(R12), R9, R10
+	MOVQ  (R11), DX
+	MULXQ (R12), CX, BX
+	MULXQ 16(R12), BP, SI
+	XORQ  AX, AX
 
 	// First 1-5 chain
 	// x[0]*y[1]
-	MULXQ 8(R11), R12, DX
-	ADCXQ R12, BX
+	MULXQ 8(R12), R13, DX
+	ADCXQ R13, BX
 	ADOXQ DX, BP
 
 	// x[2]*y[0]
-	MOVQ  16(AX), DX
-	MULXQ (R11), R13, R12
-	ADCXQ R13, BP
-	ADOXQ R12, SI
+	MOVQ  16(R11), DX
+	MULXQ (R12), R14, R13
+	ADCXQ R14, BP
+	ADOXQ R13, SI
 
 	// x[2]*y[1]
-	MULXQ 8(R11), R13, R12
-	ADCXQ R13, SI
-	ADOXQ R12, DI
+	MULXQ 8(R12), R14, R13
+	ADCXQ R14, SI
+	ADOXQ R13, DI
 
 	// x[2]*y[2]
-	MULXQ 16(R11), R13, R12
-	ADCXQ R13, DI
-	ADOXQ R12, R8
+	MULXQ 16(R12), R14, R13
+	ADCXQ R14, DI
+	ADOXQ R13, R8
 
 	// x[2]*y[3]
-	MULXQ 24(R11), R12, DX
-	ADCXQ R12, R8
+	MULXQ 24(R12), R13, DX
+	ADCXQ R13, R8
 	ADOXQ DX, R9
 
 	// Carry 6-8
-	ADCXQ CX, R9
-	ADOXQ CX, R10
-	ADCXQ CX, R10
+	ADCXQ AX, R9
+	ADOXQ AX, R10
+	ADCXQ AX, R10
 
 	// Second 1-5 chain
 	// x[1]*y[0]
-	MOVQ  8(AX), DX
-	MULXQ (R11), R13, R12
-	ADCXQ R13, BX
-	ADOXQ R12, BP
+	MOVQ  8(R11), DX
+	MULXQ (R12), R14, R13
+	ADCXQ R14, BX
+	ADOXQ R13, BP
 
 	// x[1]*y[1]
-	MULXQ 8(R11), R12, BX
-	ADCXQ R12, BP
-	ADOXQ BX, SI
+	MULXQ 8(R12), R14, R13
+	ADCXQ R14, BP
+	ADOXQ R13, SI
 
 	// x[1]*y[2]
-	MULXQ 16(R11), BP, BX
-	ADCXQ BP, SI
-	ADOXQ BX, DI
+	MULXQ 16(R12), R14, R13
+	ADCXQ R14, SI
+	ADOXQ R13, DI
 
 	// x[1]*y[3]
-	MULXQ 24(R11), BX, DX
-	ADCXQ BX, DI
+	MULXQ 24(R12), R13, DX
+	ADCXQ R13, DI
 	ADOXQ DX, R8
 
 	// x[3]*y[2]
-	MOVQ  24(AX), DX
-	MULXQ 16(R11), BP, BX
-	ADCXQ BP, R8
-	ADOXQ BX, R9
+	MOVQ  24(R11), DX
+	MULXQ 16(R12), R14, R13
+	ADCXQ R14, R8
+	ADOXQ R13, R9
 
 	// Carry 6-8
-	ADCXQ CX, R9
-	ADOXQ CX, R10
-	ADCXQ CX, R10
+	ADCXQ AX, R9
+	ADOXQ AX, R10
+	ADCXQ AX, R10
 
 	// x[3]*y[0]
-	MULXQ (R11), BX, DX
-	ADCXQ BX, SI
+	MULXQ (R12), R13, DX
+	ADCXQ R13, SI
 	ADOXQ DX, DI
 
 	// Carry 4-8
-	ADCXQ CX, DI
-	ADOXQ CX, R8
-	ADCXQ CX, R8
-	ADOXQ CX, R9
-	ADCXQ CX, R9
-	ADOXQ CX, R10
-	ADCXQ CX, R10
+	ADCXQ AX, DI
+	ADOXQ AX, R8
+	ADCXQ AX, R8
+	ADOXQ AX, R9
+	ADCXQ AX, R9
+	ADOXQ AX, R10
+	ADCXQ AX, R10
 
 	// x[0]*y[3]
-	MOVQ  (AX), DX
-	MULXQ 24(R11), DX, AX
-	ADCXQ DX, SI
-	ADOXQ AX, DI
+	MOVQ  (R11), DX
+	MULXQ 24(R12), R11, DX
+	ADCXQ R11, SI
+	ADOXQ DX, DI
 
 	// Carry 4-8
-	ADCXQ CX, DI
-	ADOXQ CX, R8
-	ADCXQ CX, R8
-	ADOXQ CX, R9
-	ADCXQ CX, R9
-	ADOXQ CX, R10
-	ADCXQ CX, R10
+	ADCXQ AX, DI
+	ADOXQ AX, R8
+	ADCXQ AX, R8
+	ADOXQ AX, R9
+	ADCXQ AX, R9
+	ADOXQ AX, R10
+	ADCXQ AX, R10
+
+	// Mod 1st stage
+	SHLQ $0x05, R9, R10
+	SHLQ $0x05, R8, R9
+	SHLQ $0x05, DI, R8
+	SHLQ $0x05, SI, DI
+	MOVQ $0x07ffffffffffffff, AX
+	ANDQ AX, SI
+	ADDQ DI, CX
+	ADCQ R8, BX
+	ADCQ R9, BP
+	ADCQ R10, SI
+	SHLQ $0x03, R9, R10
+	SHLQ $0x03, R8, R9
+	SHLQ $0x03, DI, R8
+	SHLQ $0x03, DI
+	ADDQ DI, CX
+	ADCQ R8, BX
+	ADCQ R9, BP
+	ADCQ R10, SI
+
+	// Mod 2nd stage
+	MOVQ SI, R10
+	SHRQ $0x3b, R10
+	MOVQ $0x07ffffffffffffff, AX
+	ANDQ AX, SI
+
+	// regs[7] = regs[7]*9
+	LEAQ    (R10)(R10*8), R10
+	ADDQ    R10, CX
+	ADCQ    $0x00, BX
+	ADCQ    $0x00, BP
+	ADCQ    $0x00, SI
+	MOVQ    $0xffffffffffffffff, DX
+	MOVQ    $0xfffffffffffffff7, R11
+	MOVQ    CX, DI
+	MOVQ    BX, R8
+	MOVQ    BP, R9
+	MOVQ    SI, R10
+	SUBQ    R11, DI
+	SBBQ    DX, R8
+	SBBQ    DX, R9
+	SBBQ    AX, R10
+	CMOVQCC DI, CX
+	CMOVQCC R8, BX
+	CMOVQCC R9, BP
+	CMOVQCC R10, SI
 
 	// Store results
 	MOVQ res+0(FP), AX
-	MOVQ DI, (AX)
-	MOVQ R8, 8(AX)
-	MOVQ R9, 16(AX)
-	MOVQ R10, 24(AX)
+	MOVQ CX, (AX)
+	MOVQ BX, 8(AX)
+	MOVQ BP, 16(AX)
+	MOVQ SI, 24(AX)
 	RET
 
 mulNoAdx:
@@ -283,10 +330,10 @@ mulNoAdx:
 
 	// Store results
 	MOVQ res+0(FP), AX
-	MOVQ DI, (AX)
-	MOVQ R8, 8(AX)
-	MOVQ R9, 16(AX)
-	MOVQ R10, 24(AX)
+	MOVQ CX, (AX)
+	MOVQ BX, 8(AX)
+	MOVQ BP, 16(AX)
+	MOVQ SI, 24(AX)
 	RET
 
 // func mulNoAdx(res *FieldElement, x *FieldElement, y *FieldElement)
@@ -451,10 +498,10 @@ TEXT ·mulNoAdx(SB), NOSPLIT, $0-24
 
 	// Store results
 	MOVQ res+0(FP), AX
-	MOVQ DI, (AX)
-	MOVQ R8, 8(AX)
-	MOVQ R9, 16(AX)
-	MOVQ R10, 24(AX)
+	MOVQ CX, (AX)
+	MOVQ BX, 8(AX)
+	MOVQ BP, 16(AX)
+	MOVQ SI, 24(AX)
 	RET
 
 // func mod(res *FieldElement, x *FieldElement)
@@ -492,11 +539,11 @@ TEXT ·mod(SB), NOSPLIT, $0-16
 	CMOVQCC R8, BX
 
 	// Store results
-	MOVQ res+0(FP), AX
-	MOVQ BP, (AX)
-	MOVQ SI, 8(AX)
-	MOVQ DI, 16(AX)
-	MOVQ R8, 24(AX)
+	MOVQ res+0(FP), BP
+	MOVQ AX, (BP)
+	MOVQ CX, 8(BP)
+	MOVQ DX, 16(BP)
+	MOVQ BX, 24(BP)
 	RET
 
 // func mul2(res *FieldElement, x *FieldElement)
@@ -528,11 +575,11 @@ TEXT ·mul2(SB), NOSPLIT, $0-16
 	CMOVQCC R8, BX
 
 	// Store results
-	MOVQ res+0(FP), AX
-	MOVQ BP, (AX)
-	MOVQ SI, 8(AX)
-	MOVQ DI, 16(AX)
-	MOVQ R8, 24(AX)
+	MOVQ res+0(FP), BP
+	MOVQ AX, (BP)
+	MOVQ CX, 8(BP)
+	MOVQ DX, 16(BP)
+	MOVQ BX, 24(BP)
 	RET
 
 // func div2(res *FieldElement, x *FieldElement)
@@ -549,42 +596,42 @@ TEXT ·div2(SB), NOSPLIT, $0-16
 	SARQ $0x01, BX
 
 	// Store results
-	MOVQ res+0(FP), AX
-	MOVQ BP, (AX)
-	MOVQ BP, 8(AX)
-	MOVQ BP, 16(AX)
-	MOVQ BP, 24(AX)
+	MOVQ res+0(FP), BP
+	MOVQ AX, (BP)
+	MOVQ CX, 8(BP)
+	MOVQ DX, 16(BP)
+	MOVQ BX, 24(BP)
 	RET
 
 // func sub(res *FieldElement, x *FieldElement, y *FieldElement)
 TEXT ·sub(SB), NOSPLIT, $0-24
 	MOVQ x+8(FP), BX
-	MOVQ y+16(FP), SI
+	MOVQ y+16(FP), BP
 	MOVQ (BX), AX
 	MOVQ 8(BX), CX
 	MOVQ 16(BX), DX
 	MOVQ 24(BX), BX
-	XORQ DI, DI
-	SUBQ (SI), AX
-	SBBQ 8(SI), CX
-	SBBQ 16(SI), DX
-	SBBQ 24(SI), BX
-	SBBQ $0x00, DI
-	MOVQ $0xfffffffffffffff7, SI
-	ANDQ DI, SI
-	MOVQ $0x07ffffffffffffff, R8
-	ANDQ DI, R8
-	ADDQ SI, AX
-	ADCQ DI, CX
-	ADCQ DI, DX
-	ADCQ R8, BX
+	XORQ SI, SI
+	SUBQ (BP), AX
+	SBBQ 8(BP), CX
+	SBBQ 16(BP), DX
+	SBBQ 24(BP), BX
+	SBBQ $0x00, SI
+	MOVQ $0xfffffffffffffff7, BP
+	ANDQ SI, BP
+	MOVQ $0x07ffffffffffffff, DI
+	ANDQ SI, DI
+	ADDQ BP, AX
+	ADCQ SI, CX
+	ADCQ SI, DX
+	ADCQ DI, BX
 
 	// Store results
-	MOVQ res+0(FP), AX
-	MOVQ BP, (AX)
-	MOVQ BP, 8(AX)
-	MOVQ BP, 16(AX)
-	MOVQ BP, 24(AX)
+	MOVQ res+0(FP), BP
+	MOVQ AX, (BP)
+	MOVQ CX, 8(BP)
+	MOVQ DX, 16(BP)
+	MOVQ BX, 24(BP)
 	RET
 
 // func add(res *FieldElement, x *FieldElement, y *FieldElement)
@@ -618,11 +665,11 @@ TEXT ·add(SB), NOSPLIT, $0-24
 	CMOVQCC R8, BX
 
 	// Store results
-	MOVQ res+0(FP), AX
-	MOVQ BP, (AX)
-	MOVQ SI, 8(AX)
-	MOVQ DI, 16(AX)
-	MOVQ R8, 24(AX)
+	MOVQ res+0(FP), BP
+	MOVQ AX, (BP)
+	MOVQ CX, 8(BP)
+	MOVQ DX, 16(BP)
+	MOVQ BX, 24(BP)
 	RET
 
 // func mulD(res *FieldElement, x *FieldElement)
@@ -924,87 +971,135 @@ store:
 	RET
 
 // func sqr(res *FieldElement, x *FieldElement)
-// Requires: ADX, BMI2
+// Requires: ADX, BMI2, CMOV
 TEXT ·sqr(SB), NOSPLIT, $0-16
 	MOVQ x+8(FP), AX
 
 	// load x to registers
-	MOVQ (AX), R10
-	MOVQ 8(AX), R11
-	MOVQ 16(AX), R12
-	MOVQ 24(AX), R13
+	MOVQ (AX), R13
+	MOVQ 8(AX), R10
+	MOVQ 16(AX), R11
+	MOVQ 24(AX), R12
 
 	// clear flags
-	XORQ R8, R8
+	XORQ AX, AX
 
 	// fill registers
 	// x[3]*x[2]
-	MOVQ  R13, DX
-	MULXQ R12, SI, DI
+	MOVQ  R12, DX
+	MULXQ R11, DI, R8
 
 	// x[0]*x[3]
-	MOVQ  R10, DX
-	MULXQ R13, BX, BP
+	MOVQ  R13, DX
+	MULXQ R12, BP, SI
 
 	// x[0]*x[1]
-	MULXQ R11, AX, CX
+	MULXQ R10, CX, BX
 
 	// 2-4 pass
 	// x[0]*y[2]
-	MULXQ R12, R14, DX
-	ADCXQ R14, CX
-	ADOXQ DX, BX
+	MULXQ R11, R14, DX
+	ADCXQ R14, BX
+	ADOXQ DX, BP
 
 	// x[1]*y[2]
-	MOVQ  R11, DX
-	MULXQ R12, R15, R14
-	ADCXQ R15, BX
-	ADOXQ R14, BP
+	MOVQ  R10, DX
+	MULXQ R11, R15, R14
+	ADCXQ R15, BP
+	ADOXQ R14, SI
 
 	// x[1]*y[3]
-	MULXQ R13, R14, DX
-	ADCXQ R14, BP
-	ADOXQ DX, SI
+	MULXQ R12, R14, DX
+	ADCXQ R14, SI
+	ADOXQ DX, DI
 
 	// Carry 5-8
-	ADCXQ R9, SI
-	ADOXQ R9, DI
-	ADCXQ R9, DI
-	ADOXQ R9, R8
+	ADCXQ AX, DI
+	ADOXQ AX, R8
+	ADCXQ AX, R8
+	ADOXQ AX, R9
+	ADCXQ AX, R9
 
 	// clear 7
-	XORQ R8, R8
+	XORQ R9, R9
 
 	// multiply by 2 by shifting
+	SHLQ $0x01, R8, R9
 	SHLQ $0x01, DI, R8
 	SHLQ $0x01, SI, DI
 	SHLQ $0x01, BP, SI
 	SHLQ $0x01, BX, BP
 	SHLQ $0x01, CX, BX
-	SHLQ $0x01, AX, CX
-	SHLQ $0x01, AX
+	SHLQ $0x01, CX
 
 	// add all z*z
-	MOVQ  R10, DX
-	MULXQ R10, DX, R9
-	ADDQ  R9, AX
-	MOVQ  R11, DX
-	MULXQ R11, AX, R9
-	ADCQ  AX, CX
-	ADCQ  R9, BX
-	MOVQ  R12, DX
-	MULXQ R12, AX, R9
-	ADCQ  AX, BP
-	ADCQ  R9, SI
 	MOVQ  R13, DX
-	MULXQ R13, AX, R9
-	ADCQ  AX, DI
-	ADCQ  R9, R8
+	MULXQ R13, AX, DX
+	ADDQ  DX, CX
+	MOVQ  R10, DX
+	MULXQ R10, R10, DX
+	ADCQ  R10, BX
+	ADCQ  DX, BP
+	MOVQ  R11, DX
+	MULXQ R11, R10, DX
+	ADCQ  R10, SI
+	ADCQ  DX, DI
+	MOVQ  R12, DX
+	MULXQ R12, R10, DX
+	ADCQ  R10, R8
+	ADCQ  DX, R9
+
+	// Mod 1st stage
+	SHLQ $0x05, R8, R9
+	SHLQ $0x05, DI, R8
+	SHLQ $0x05, SI, DI
+	SHLQ $0x05, BP, SI
+	MOVQ $0x07ffffffffffffff, DX
+	ANDQ DX, BP
+	ADDQ SI, AX
+	ADCQ DI, CX
+	ADCQ R8, BX
+	ADCQ R9, BP
+	SHLQ $0x03, R8, R9
+	SHLQ $0x03, DI, R8
+	SHLQ $0x03, SI, DI
+	SHLQ $0x03, SI
+	ADDQ SI, AX
+	ADCQ DI, CX
+	ADCQ R8, BX
+	ADCQ R9, BP
+
+	// Mod 2nd stage
+	MOVQ BP, R9
+	SHRQ $0x3b, R9
+	MOVQ $0x07ffffffffffffff, DX
+	ANDQ DX, BP
+
+	// regs[7] = regs[7]*9
+	LEAQ    (R9)(R9*8), R9
+	ADDQ    R9, AX
+	ADCQ    $0x00, CX
+	ADCQ    $0x00, BX
+	ADCQ    $0x00, BP
+	MOVQ    $0xffffffffffffffff, R10
+	MOVQ    $0xfffffffffffffff7, R11
+	MOVQ    AX, SI
+	MOVQ    CX, DI
+	MOVQ    BX, R8
+	MOVQ    BP, R9
+	SUBQ    R11, SI
+	SBBQ    R10, DI
+	SBBQ    R10, R8
+	SBBQ    DX, R9
+	CMOVQCC SI, AX
+	CMOVQCC DI, CX
+	CMOVQCC R8, BX
+	CMOVQCC R9, BP
 
 	// Store results
-	MOVQ res+0(FP), AX
-	MOVQ BP, (AX)
-	MOVQ SI, 8(AX)
-	MOVQ DI, 16(AX)
-	MOVQ R8, 24(AX)
+	MOVQ res+0(FP), DX
+	MOVQ AX, (DX)
+	MOVQ CX, 8(DX)
+	MOVQ BX, 16(DX)
+	MOVQ BP, 24(DX)
 	RET
