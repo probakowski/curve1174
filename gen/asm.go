@@ -397,8 +397,8 @@ func subN() {
 func storeResults() {
 	Comment("Store results")
 	resPtr = Load(Param("res"), GP64())
-	for i := 0; i < 4; i++ {
-		MOVQ(regs[i], mem(resPtr, i))
+	for i := 4; i < 8; i++ {
+		MOVQ(regs[i], mem(resPtr, i-4))
 	}
 }
 
@@ -505,38 +505,60 @@ func sqrFunc() {
 	//JNE(LabelRef("mulNoAdx"))
 
 	xPtr = Load(Param("x"), GP64())
-	yPtr = xPtr
 
-	Comment("Fill all regs")
-	mulS(3, 1, regs[4], regs[5])
-	mulS(3, 3, regs[6], regs[7])
-	mulS(0, 0, regs[0], regs[1])
-	mulS(0, 2, regs[2], regs[3])
+	x0, x1, x2, x3 := GP64(), GP64(), GP64(), GP64()
 
-	XORQ(zero, zero)
-	Comment("First 1-5 chain")
-	mulAddS(0, 1)
-	mulAddS(2, 0)
-	mulAddS(2, 1)
-	mulAddS(2, 2)
-	mulAddS(2, 3)
-	carry(6, 8)
+	Comment("load x to registers")
+	MOVQ(mem(xPtr, 0), x0)
+	MOVQ(mem(xPtr, 1), x1)
+	MOVQ(mem(xPtr, 2), x2)
+	MOVQ(mem(xPtr, 3), x3)
 
-	Comment("Second 1-5 chain")
-	mulAddS(1, 0)
-	mulAddS(1, 1)
-	mulAddS(1, 2)
-	mulAddS(1, 3)
-	mulAddS(3, 2)
-	carry(6, 8)
+	Comment("clear flags")
+	XORQ(regs[7], regs[7])
 
-	mulAddS(3, 0)
-	carry(4, 8)
+	Comment("fill registers")
 
-	mulAddS(0, 3)
-	carry(4, 8)
+	Comment("x[3]*x[2]")
+	mulS(3, x3, x2, regs[5], regs[6])
+	Comment("x[0]*x[3]")
+	mulS(0, x0, x3, regs[3], regs[4])
+	Comment("x[0]*x[1]")
+	mulS(0, x0, x1, regs[1], regs[2])
 
-	extendedMod()
+	Comment("2-4 pass")
+	mulAddS(0, 2, x0, x2)
+	mulAddS(1, 2, x1, x2)
+	mulAddS(1, 3, x1, x3)
+	carry(5, 8)
+
+	Comment("clear 7")
+	XORQ(regs[7], regs[7])
+
+	Comment("multiply by 2 by shifting")
+	SHLQ(Imm(1), regs[6], regs[7])
+	SHLQ(Imm(1), regs[5], regs[6])
+	SHLQ(Imm(1), regs[4], regs[5])
+	SHLQ(Imm(1), regs[3], regs[4])
+	SHLQ(Imm(1), regs[2], regs[3])
+	SHLQ(Imm(1), regs[1], regs[2])
+	SHLQ(Imm(1), regs[1])
+
+	Comment("add all z*z")
+	lo, hi := GP64(), GP64()
+	mulS(0, x0, x0, regs[0], hi)
+	ADDQ(hi, regs[1])
+	mulS(1, x1, x1, lo, hi)
+	ADCQ(lo, regs[2])
+	ADCQ(hi, regs[3])
+	mulS(2, x2, x2, lo, hi)
+	ADCQ(lo, regs[4])
+	ADCQ(hi, regs[5])
+	mulS(3, x3, x3, lo, hi)
+	ADCQ(lo, regs[6])
+	ADCQ(hi, regs[7])
+
+	//extendedMod()
 
 	storeResults()
 
@@ -586,7 +608,7 @@ func mulFunc() {
 	mulAdd(0, 3)
 	carry(4, 8)
 
-	extendedMod()
+	//extendedMod()
 
 	storeResults()
 
@@ -627,11 +649,14 @@ func extendedMod() {
 }
 
 func carry(start, end int) {
-	Comment(fmt.Sprintf("Carry %d-7", start))
+	Comment(fmt.Sprintf("Carry %d-%d", start, end))
 	ADCXQ(zero, regs[start])
+
 	for i := start + 1; i < end; i++ {
 		ADOXQ(zero, regs[i])
-		ADCXQ(zero, regs[i])
+		if i < end-1 || (end-start)%2 == 0 {
+			ADCXQ(zero, regs[i])
+		}
 	}
 }
 
@@ -653,31 +678,22 @@ func mul(x, y int, low, hi Register) {
 	MULXQ(mem(yPtr, y), low, hi)
 }
 
-func mulAddS(x, y int) {
-	Comment(fmt.Sprintf("x[%d]*y[%d]", x, y))
+func mulAddS(xn, yn int, x, y Register) {
+	Comment(fmt.Sprintf("x[%d]*y[%d]", xn, yn))
 	hi := GP64()
 	low := GP64()
-	mulS(x, y, low, hi)
-	xy := x + y
+	mulS(xn, x, y, low, hi)
+	xy := xn + yn
 	ADCXQ(low, regs[xy])
 	ADOXQ(hi, regs[xy+1])
 }
 
-func mulS(x, y int, low, hi Register) {
-	var op Op = mem(yPtr, y)
-	if y == lastX && x != y {
-		op = GP64()
-		MOVQ(RDX, op)
+func mulS(xn int, x, y, low, hi Register) {
+	if xn != lastX {
+		MOVQ(x, RDX)
+		lastX = xn
 	}
-	if x != lastX {
-		MOVQ(mem(yPtr, x), RDX)
-		lastX = x
-	}
-	if x == y {
-		MULXQ(RDX, low, hi)
-	} else {
-		MULXQ(op, low, hi)
-	}
+	MULXQ(y, low, hi)
 }
 
 func mem(xPtr Register, i int) Mem {

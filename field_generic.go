@@ -95,12 +95,12 @@ func sqr(res, p *FieldElement) {
 	r6, carry = bits.Add64(0, r6, carry)
 	r7, _ = bits.Add64(0, r7, carry)
 
-	r7 = r6>>63 + r7<<1
-	r6 = r5>>63 + r6<<1
-	r5 = r4>>63 + r5<<1
-	r4 = r3>>63 + r4<<1
-	r3 = r2>>63 + r3<<1
-	r2 = r1>>63 + r2<<1
+	r7 = r7<<1 | r6>>63
+	r6 = r6<<1 | r5>>63
+	r5 = r5<<1 | r4>>63
+	r4 = r4<<1 | r3>>63
+	r3 = r3<<1 | r2>>63
+	r2 = r2<<1 | r1>>63
 	r1 = r1 << 1
 
 	carry, r0 = bits.Mul64(p[0], p[0])

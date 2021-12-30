@@ -41,22 +41,13 @@ func (p Point) String() string {
 }
 
 func (p *Point) ToAffine(pp *Point) *Point {
-	//var inv FieldElement
-	//inv.FastInverse(&pp.Z)
-	//zInv := &inv
-	//p.X.Mul(&pp.X, zInv)
-	//p.Y.Mul(&pp.Y, zInv)
-	//p.T.Mul(&pp.T, zInv)
-	//p.Z.Set(UOne)
-	z := pp.Z.ToBigInt()
-	inverse := z.ModInverse(z, P)
-	if inverse != nil {
-		zInv := FromBigInt(inverse)
-		p.X.Mul(&pp.X, zInv)
-		p.Y.Mul(&pp.Y, zInv)
-		p.T.Mul(&pp.T, zInv)
-		p.Z.Set(UOne)
-	}
+	var inv FieldElement
+	inv.Inverse(&pp.Z)
+	zInv := &inv
+	p.X.Mul(&pp.X, zInv)
+	p.Y.Mul(&pp.Y, zInv)
+	p.T.Mul(&pp.T, zInv)
+	p.Z.Set(UOne)
 	return p
 }
 

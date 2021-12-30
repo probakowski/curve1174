@@ -233,10 +233,13 @@ func randomTestOp(t *testing.T,
 		p := FromBigInt(b1)
 		p2 := FromBigInt(b2)
 		var res FieldElement
+
 		fieldFunc(&res, p, p2)
 		b3 := new(big.Int)
 		bigIntFunc(b3, b1, b2)
-		b3.Add(b3, P).Mod(b3, P)
+		two := big.NewInt(1)
+		two.Lsh(two, 256)
+		b3.Mod(b3, P)
 		b4 := res.ToBigInt()
 		if b4.Cmp(b3) != 0 {
 			t.Errorf("\n%x\n%x\n%x\n%x", b1, b2, b3, b4)
@@ -270,4 +273,22 @@ func TestFastInverse(t *testing.T) {
 	}, func(res *big.Int, x *big.Int, y *big.Int) {
 		res.ModInverse(x, P)
 	})
+}
+
+func TestSqrMul(t *testing.T) {
+	var p FieldElement = FieldElement{
+		0x02f9052f8017dbde,
+		0xc2d6b27b4453a8ad,
+		0x51b0fcf0fa3f3df8,
+		0x2ca9df7680ba163b,
+	}
+
+	var res1, res2 FieldElement
+
+	mul(&res1, &p, &p)
+	sqr(&res2, &p)
+
+	if !res1.Equals(&res2) {
+		t.Errorf("\n%x\n%x", res1, res2)
+	}
 }
