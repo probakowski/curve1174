@@ -52,7 +52,6 @@ func TestDoubling(t *testing.T) {
 }
 
 func TestSpecificScalarBaseMult(t *testing.T) {
-	PrecomputeBase()
 	vectors := []string{"0", "1", "2", "3", "16", "17", "256", "257", "1050", "1000000006",
 		"45073459087905739457391209340239423224234234457"}
 	for _, vector := range vectors {
@@ -68,7 +67,6 @@ func TestSpecificScalarBaseMult(t *testing.T) {
 }
 
 func TestScalarBaseMult(t *testing.T) {
-	PrecomputeBase()
 	randomTestOp(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
 		var p Point
 		p.ScalarBaseMult(x).ToAffine(&p)
@@ -251,14 +249,6 @@ func randomTestOp(t *testing.T,
 	}
 }
 
-func TestPrecompute(t *testing.T) {
-	PrecomputeBase()
-	var p Point
-	var f FieldElement
-	f.SetBigInt(scalar)
-	p.ScalarBaseMult(&f)
-}
-
 func TestInverse(t *testing.T) {
 	randomTestOp(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
 		res.Inverse(x)
@@ -267,21 +257,8 @@ func TestInverse(t *testing.T) {
 	}, 10000)
 }
 
-func TestFastInverse(t *testing.T) {
-	randomTest(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
-		res.FastInverse(x)
-	}, func(res *big.Int, x *big.Int, y *big.Int) {
-		res.ModInverse(x, P)
-	})
-}
-
 func TestSqrMul(t *testing.T) {
-	var p FieldElement = FieldElement{
-		0x02f9052f8017dbde,
-		0xc2d6b27b4453a8ad,
-		0x51b0fcf0fa3f3df8,
-		0x2ca9df7680ba163b,
-	}
+	p := FieldElement{0x02f9052f8017dbde, 0xc2d6b27b4453a8ad, 0x51b0fcf0fa3f3df8, 0x2ca9df7680ba163b}
 
 	var res1, res2 FieldElement
 

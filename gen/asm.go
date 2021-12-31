@@ -17,7 +17,7 @@ var lastX int
 
 func main() {
 	Package("przemko-robakowski.pl/curve1174")
-	ConstraintExpr("!purego")
+	ConstraintExpr("!curve1174_purego")
 
 	for i := 0; i < 8; i++ {
 		regs[i] = GP64()

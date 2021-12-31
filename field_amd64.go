@@ -1,5 +1,5 @@
-//go:build !purego
-// +build !purego
+//go:build !curve1174_purego
+// +build !curve1174_purego
 
 package curve1174
 

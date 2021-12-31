@@ -1,5 +1,4 @@
-//go:build !amd64 || purego
-// +build !amd64 purego
+//go:build !amd64 || curve1174_purego
 
 package curve1174
 
@@ -70,49 +69,44 @@ func mulAdd(a, b, r0, r1, c uint64) (o0, o1, carry uint64) {
 	return
 }
 
-func div2(res, p *FieldElement) {
-	res[0] = p[0]>>1 | bits.RotateLeft64(p[1]&1, -1)
-	res[1] = p[1]>>1 | bits.RotateLeft64(p[2]&1, -1)
-	res[2] = p[2]>>1 | bits.RotateLeft64(p[3]&1, -1)
-	res[3] = p[3] >> 1
-}
-
 func sqr(res, p *FieldElement) {
-	var r0, r1, r2, r3, r4, r5, r6, r7, carry uint64
-
-	r2, r1 = bits.Mul64(p[0], p[1])
-	r4, r3 = bits.Mul64(p[0], p[3])
-	r6, r5 = bits.Mul64(p[2], p[3])
-
-	r2, r3, carry = mulAdd(p[0], p[2], r2, r3, 0)
-	r4, r5, carry = mulAdd(p[1], p[3], r4, r5, carry)
-	r6, carry = bits.Add64(0, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
-
-	r3, r4, carry = mulAdd(p[1], p[2], r3, r4, 0)
-	r5, _ = bits.Add64(0, r5, carry)
-	r5, carry = bits.Add64(0, r5, carry)
-	r6, carry = bits.Add64(0, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
-
-	r7 = r7<<1 | r6>>63
-	r6 = r6<<1 | r5>>63
-	r5 = r5<<1 | r4>>63
-	r4 = r4<<1 | r3>>63
-	r3 = r3<<1 | r2>>63
-	r2 = r2<<1 | r1>>63
-	r1 = r1 << 1
-
-	carry, r0 = bits.Mul64(p[0], p[0])
-	r1, carry = bits.Add64(r1, carry, 0)
-	r2, r3, carry = mulAdd(p[1], p[1], r2, r3, carry)
-	r4, r5, carry = mulAdd(p[2], p[2], r4, r5, carry)
-	r6, r7, _ = mulAdd(p[3], p[3], r6, r7, carry)
-
-	extendedMod(res, r0, r1, r2, r3, r4, r5, r6, r7)
+	//var r0, r1, r2, r3, r4, r5, r6, r7, carry uint64
+	//
+	//r2, r1 = bits.Mul64(p[0], p[1])
+	//r4, r3 = bits.Mul64(p[0], p[3])
+	//r6, r5 = bits.Mul64(p[2], p[3])
+	//
+	//r2, r3, carry = mulAdd(p[0], p[2], r2, r3, 0)
+	//r4, r5, carry = mulAdd(p[1], p[3], r4, r5, carry)
+	//r6, carry = bits.Add64(0, r6, carry)
+	//r7, _ = bits.Add64(0, r7, carry)
+	//
+	//r3, r4, carry = mulAdd(p[1], p[2], r3, r4, 0)
+	//r5, _ = bits.Add64(0, r5, carry)
+	//r5, carry = bits.Add64(0, r5, carry)
+	//r6, carry = bits.Add64(0, r6, carry)
+	//r7, _ = bits.Add64(0, r7, carry)
+	//
+	//r7 = r7<<1 | r6>>63
+	//r6 = r6<<1 | r5>>63
+	//r5 = r5<<1 | r4>>63
+	//r4 = r4<<1 | r3>>63
+	//r3 = r3<<1 | r2>>63
+	//r2 = r2<<1 | r1>>63
+	//r1 = r1 << 1
+	//
+	//carry, r0 = bits.Mul64(p[0], p[0])
+	//r1, carry = bits.Add64(r1, carry, 0)
+	//r2, r3, carry = mulAdd(p[1], p[1], r2, r3, carry)
+	//r4, r5, carry = mulAdd(p[2], p[2], r4, r5, carry)
+	//r6, r7, _ = mulAdd(p[3], p[3], r6, r7, carry)
+	//
+	//extendedMod(res, r0, r1, r2, r3, r4, r5, r6, r7)
+	mul(res, p, p)
 }
 
 func mul(res, p1, p2 *FieldElement) {
+	_, _ = p1[3], p2[3]
 	var r0, r1, r2, r3, r4, r5, r6, r7, carry uint64
 
 	r1, r0 = bits.Mul64(p1[0], p2[0])

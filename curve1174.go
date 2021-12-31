@@ -1,3 +1,5 @@
+//Package curve1174 implements operations on Curve1174. It's Edwards curve with equation x^2+y^2 = 1-1174x^2y^2 over
+//finite field F_p, p=2^251-9. It was introduced by Bernstein, Hamburg, Krasnova, and Lange in 2013 (https://eprint.iacr.org/2013/325)
 package curve1174
 
 import (
@@ -5,8 +7,10 @@ import (
 	"math/big"
 )
 
+//P is order of F_p, 2^251-9
 var P, _ = new(big.Int).SetString("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7", 16)
 
+//UBase is base point of curve in affine coordinates (UBase.Z == 1)
 var UBase = &Point{
 	X: FieldElement{0x16123f27bce29eda, 0xc021d96a492ecd65, 0x9343aee7c029a190, 0x37fbb0cea308c47},
 	Y: FieldElement{0xa4ccb1bf9b46360e, 0x4fe2dee2af3f976b, 0x6656841169840e0c, 0x6b72f82d47fb7cc},
@@ -14,6 +18,7 @@ var UBase = &Point{
 	T: FieldElement{0xfb1ebfece06620ec, 0x9c6c6daf574e84cb, 0x5083299c2d40b958, 0x18b74129cf1e5d9},
 }
 
+//UE is identity element of curve's group (x:0, y:1)
 var UE = &Point{
 	X: UZero,
 	Y: *UOne,
@@ -21,6 +26,7 @@ var UE = &Point{
 	T: UZero,
 }
 
+//Point represents point on curve. It supports projective and extended coordinates
 type Point struct {
 	X FieldElement
 	Y FieldElement
@@ -28,6 +34,7 @@ type Point struct {
 	T FieldElement
 }
 
+//Set p to be exactly the same as p2
 func (p *Point) Set(p2 *Point) *Point {
 	p.X.Set(&p2.X)
 	p.Y.Set(&p2.Y)
@@ -40,6 +47,7 @@ func (p Point) String() string {
 	return fmt.Sprintf("Curve1174 Point\nX:%x\nY:%x\nZ:%x\nT:%x", p.X, p.Y, p.Z, p.T)
 }
 
+//ToAffine transforms point pp to affine coordinates and store result in p (p.Z==1)
 func (p *Point) ToAffine(pp *Point) *Point {
 	var inv FieldElement
 	inv.Inverse(&pp.Z)
@@ -51,102 +59,12 @@ func (p *Point) ToAffine(pp *Point) *Point {
 	return p
 }
 
+//Equals checks if two points have exactly the same representation (all components must be equal)
 func (p *Point) Equals(p2 *Point) bool {
 	return p.Z.Equals(&p2.Z) && p.Y.Equals(&p2.Y) && p.X.Equals(&p2.X)
 }
 
-var precomputedBase [64][16]Point
-var precomputed bool
-
-func PrecomputeBase() {
-	if precomputed {
-		return
-	}
-	var p Point
-	p.Set(UBase)
-	sp := &p
-	for i := 0; i < 64; i++ {
-		el := &precomputedBase[i]
-		el[0].Set(UE)
-		el[1].Set(sp)
-		el[2].Double(sp)
-		el[3].Add(&el[2], sp)
-		el[4].Double(&el[2])
-		el[5].Add(&el[4], sp)
-		el[6].Double(&el[3])
-		el[7].Add(&el[6], sp)
-		el[8].Double(&el[4])
-		el[9].Add(&el[8], sp)
-		el[10].Double(&el[5])
-		el[11].Add(&el[10], sp)
-		el[12].Double(&el[6])
-		el[13].Add(&el[12], sp)
-		el[14].Double(&el[7])
-		el[15].Add(&el[14], sp)
-		for j := 0; j < 16; j++ {
-			el[j].ToAffine(&el[j])
-		}
-		sp.Double(&el[8]).ToAffine(sp)
-	}
-
-	precomputed = true
-}
-
-var precomputedBase2 [32][256]Point
-var precomputed2 bool
-
-func PrecomputeBase2() {
-	if precomputed2 {
-		return
-	}
-	var p Point
-	p.Set(UBase)
-	sp := &p
-	for i := 0; i < 32; i++ {
-		el := &precomputedBase2[i]
-		el[0].Set(UE)
-		el[1].Set(sp)
-		for i := 2; i < 255; i += 2 {
-			el[i].Double(&el[i-1]).ToAffine(&el[i])
-			el[i+1].AddZ1(&el[i], sp).ToAffine(&el[i+1])
-		}
-		sp.Double(&el[128]).ToAffine(sp)
-	}
-}
-
-func (p *Point) ScalarBaseMult2(b *FieldElement) *Point {
-	index := b[0] & 0xFF
-	p.Set(&precomputedBase2[0][index])
-
-	for i := 1; i < 32; i++ {
-		index = (b[i/256] >> ((i % 256) * 8)) & 0xFF
-		p.AddZ1(p, &precomputedBase2[i][index])
-	}
-
-	return p
-}
-
-func (p *Point) ScalarBaseMult(b *FieldElement) *Point {
-	if precomputed2 {
-		return p.ScalarBaseMult2(b)
-	}
-	if !precomputed {
-		return p.ScalarMult(UBase, b)
-	}
-
-	index := b[0] & 0xF
-	selectPoint(p, &precomputedBase[0], index)
-	var pp Point
-
-	for i := 1; i < 64; i++ {
-		index = (b[i/16] >> ((i % 16) * 4)) & 0xF
-		selectPoint(&pp, &precomputedBase[i], index)
-		p.AddZ1(p, &pp)
-	}
-
-	return p
-}
-
+//ScalarMult multiplies point on curve sp by scalar b (b<2^251-9) and stores result in p. Execution time doesn't depend on b.
 func (p *Point) ScalarMult(sp *Point, b *FieldElement) *Point {
 	el := [16]Point{*UE, *sp}
 	p.Set(UE)
@@ -200,6 +118,8 @@ func (p *Point) ScalarMult(sp *Point, b *FieldElement) *Point {
 	return p
 }
 
+//AddZ1 adds two points on curve and store results in p. p2 has to be in affine coordinates (p2.Z == 1)
+//Formula based on https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#addition-madd-2008-hwcd
 func (p *Point) AddZ1(p1, p2 *Point) *Point {
 	var a, b, c, d, e, e1, f, g, h FieldElement
 	a.Mul(&p1.X, &p2.X)
@@ -218,6 +138,8 @@ func (p *Point) AddZ1(p1, p2 *Point) *Point {
 	return p
 }
 
+//Add adds any two points on curve and store results in p.
+//Formula based on https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#addition-add-2008-hwcd
 func (p *Point) Add(p1, p2 *Point) *Point {
 	var a, b, c, d, e, e1, f, g, h FieldElement
 	a.Mul(&p1.X, &p2.X)
@@ -236,6 +158,7 @@ func (p *Point) Add(p1, p2 *Point) *Point {
 	return p
 }
 
+//addToProjective adds two points on curve store result in p. Result is in projective coordinates (p.T is not correct!)
 func (p *Point) addToProjective(p1, p2 *Point) *Point {
 	var a, b, c, d, e, e1, f, g, h FieldElement
 	a.Mul(&p1.X, &p2.X)
@@ -253,6 +176,7 @@ func (p *Point) addToProjective(p1, p2 *Point) *Point {
 	return p
 }
 
+//doubleProjective doubles point on curve using projective coordinates and store result in p (p.T is not correct!)
 func (p *Point) doubleProjective(dp *Point) *Point {
 	var b, c, d, f, h, j FieldElement
 	b.Add(&dp.X, &dp.Y).Sqr(&b)
@@ -267,6 +191,8 @@ func (p *Point) doubleProjective(dp *Point) *Point {
 	return p
 }
 
+//Double doubles point on curve and store result in p (p = dp+dp)
+//Formula based on https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#doubling-dbl-2008-hwcd
 func (p *Point) Double(dp *Point) *Point {
 	var a, b, c, e, f, g, h FieldElement
 	a.Sqr(&dp.X)
@@ -283,6 +209,8 @@ func (p *Point) Double(dp *Point) *Point {
 	return p
 }
 
+//DoubleZ1 doubles point on curve and store result in p (p = dp+dp). dp has to be in affine coordinates (dp.Z == 1)
+//Formula based on https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#doubling-mdbl-2008-hwcd
 func (p *Point) DoubleZ1(dp *Point) *Point {
 	var a, b, c, d, e, f, g, h FieldElement
 	a.Sqr(&dp.X)

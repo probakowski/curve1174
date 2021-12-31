@@ -12,48 +12,61 @@ const P2 uint64 = 0xffffffffffffffff
 const P1 uint64 = 0xffffffffffffffff
 const P0 uint64 = 0xfffffffffffffff7
 
+//UOne represents 1
 var UOne = &FieldElement{1}
-var UD = &FieldElement{0xfffffffffffffb61, P1, P2, P3}
+
+//UP represents 2^251-9
 var UP = &FieldElement{P0, P1, P2, P3}
+
+//UZero represents 0
 var UZero FieldElement
 
+//FieldElement is element of finite field F_p, p=2^251-9
 type FieldElement [4]uint64
 
+//MulD multiplies field element by 1174 mod 2^251-9. Execution time doesn't depend on values
 func (out *FieldElement) MulD(p *FieldElement) *FieldElement {
 	mulD(out, p)
 	return out
 }
 
+//Mul2 multiplies field element by 2 mod 2^251-9. Execution time doesn't depend on values
 func (out *FieldElement) Mul2(p *FieldElement) *FieldElement {
 	mul2(out, p)
 	return out
 }
 
+//Mul multiplies two field elements mod 2^251-9. Execution time doesn't depend on values
 func (out *FieldElement) Mul(p, p2 *FieldElement) *FieldElement {
 	mul(out, p, p2)
 	return out
 }
 
+//Sqr squares field element mod 2^251-9. Execution time doesn't depend on values
 func (out *FieldElement) Sqr(p *FieldElement) *FieldElement {
 	sqr(out, p)
 	return out
 }
 
+//Add adds two field elements mod 2^251-9. Execution time doesn't depend on values
 func (out *FieldElement) Add(p, p2 *FieldElement) *FieldElement {
 	add(out, p, p2)
 	return out
 }
 
+//Sub subtracts two field elements mod 2^251-9. Execution time doesn't depend on values
 func (out *FieldElement) Sub(p, p2 *FieldElement) *FieldElement {
 	sub(out, p, p2)
 	return out
 }
 
+//Mod returns number mod 2^251-9. Execution time doesn't depend on values
 func (out *FieldElement) Mod(p *FieldElement) *FieldElement {
 	mod(out, p)
 	return out
 }
 
+//Set sets one field element to be equal to the other. Execution time doesn't depend on values
 func (out *FieldElement) Set(p2 *FieldElement) *FieldElement {
 	out[0] = p2[0]
 	out[1] = p2[1]
@@ -62,78 +75,8 @@ func (out *FieldElement) Set(p2 *FieldElement) *FieldElement {
 	return out
 }
 
-func (out *FieldElement) IsEven() bool {
-	return out[0]&1 == 0
-}
-
-func (out *FieldElement) subNoMod(p, p2 *FieldElement) *FieldElement {
-	var borrow uint64
-	out[0], borrow = bits.Sub64(p[0], p2[0], 0)
-	out[1], borrow = bits.Sub64(p[1], p2[1], borrow)
-	out[2], borrow = bits.Sub64(p[2], p2[2], borrow)
-	out[3], _ = bits.Sub64(p[3], p2[3], borrow)
-
-	return out
-}
-
-func (out *FieldElement) subP(p *FieldElement) *FieldElement {
-	var borrow uint64
-	out[0], borrow = bits.Sub64(p[0], P0, 0)
-	out[1], borrow = bits.Sub64(p[1], P1, borrow)
-	out[2], borrow = bits.Sub64(p[2], P2, borrow)
-	out[3], _ = bits.Sub64(p[3], P3, borrow)
-
-	return out
-}
-
-func (out *FieldElement) addP(p *FieldElement) *FieldElement {
-	var carry uint64
-	out[0], carry = bits.Add64(p[0], P0, 0)
-	out[1], carry = bits.Add64(p[1], P1, carry)
-	out[2], carry = bits.Add64(p[2], P2, carry)
-	out[3], _ = bits.Add64(p[3], P3, carry)
-	return out
-}
-
-func (out *FieldElement) FastInverse(p2 *FieldElement) *FieldElement {
-	var u, v, b FieldElement
-	d := FieldElement{1}
-	u.Set(UP)
-	v.Set(p2)
-
-	for !u.IsZero() {
-		for u.IsEven() {
-			if !b.IsEven() {
-				b.subP(&b)
-
-			}
-			div2(&b, &b)
-			div2(&u, &u)
-		}
-		for v.IsEven() {
-			if !d.IsEven() {
-				d.subP(&d)
-			}
-			div2(&d, &d)
-			div2(&v, &v)
-		}
-		if u.Cmp(&v) >= 0 {
-			u.subNoMod(&u, &v)
-			b.subNoMod(&b, &d)
-		} else {
-			v.subNoMod(&v, &u)
-			d.subNoMod(&d, &b)
-		}
-	}
-	if d[3]&(1<<63) == 0 {
-		out.Set(&d)
-	} else {
-		out.addP(&d)
-	}
-	//fastInverse(out, p2)
-	return out
-}
-
+//Inverse sets out to be inverse of p2 mod 2^251-9 (out * p2 == 1 | 2^251-9). It uses Euler's theorem and computes
+//inverse by raising p2 to power 2^251-11 (m=2^251-9 is prime, a^-1 == a^(m-2) | m). Execution time doesn't depend on value
 func (out *FieldElement) Inverse(p2 *FieldElement) *FieldElement {
 	var p3, pF, p2F, p4F, p8F, p16F, p32F FieldElement
 	p3.Sqr(p2).Mul(&p3, p2)
@@ -164,10 +107,12 @@ func (out *FieldElement) sqrTimes(p *FieldElement, n int) *FieldElement {
 	return out
 }
 
+//Equals checks if 2 field elemets has the same value
 func (out *FieldElement) Equals(p2 *FieldElement) bool {
 	return out[0] == p2[0] && out[1] == p2[1] && out[2] == p2[2] && out[3] == p2[3]
 }
 
+//ToBigInt returns element value as *big.Int
 func (out *FieldElement) ToBigInt() *big.Int {
 	l := len(out)
 	var b [64]byte
@@ -179,6 +124,7 @@ func (out *FieldElement) ToBigInt() *big.Int {
 	return b4
 }
 
+//SetBigInt sets field elements to value from *big.Int.
 func (out *FieldElement) SetBigInt(b1 *big.Int) *FieldElement {
 	b := b1.Bits()
 	for i := 0; i < len(out); i++ {
@@ -196,6 +142,7 @@ func (out *FieldElement) SetBigInt(b1 *big.Int) *FieldElement {
 	return out
 }
 
+//FromBigInt returns field element with the same value as provided big.Int
 func FromBigInt(b1 *big.Int) *FieldElement {
 	var p FieldElement
 	return p.SetBigInt(b1)

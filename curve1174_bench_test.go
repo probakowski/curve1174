@@ -33,7 +33,7 @@ func BenchmarkCurve1174ScalarMult(b *testing.B) {
 	f := FromBigInt(scalar)
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.ScalarMult(UBase, f) //.ToAffine(&p)
+		p.ScalarMult(UBase, f).ToAffine(&p)
 	}
 }
 
@@ -42,7 +42,6 @@ var pp Point
 func BenchmarkCurve1174ScalarBaseMult(b *testing.B) {
 	var p Point
 	f := FromBigInt(scalar)
-	PrecomputeBase()
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
@@ -50,17 +49,6 @@ func BenchmarkCurve1174ScalarBaseMult(b *testing.B) {
 	}
 	b.StopTimer()
 	pp = p
-}
-
-func BenchmarkCurve1174ScalarBaseMult2(b *testing.B) {
-	var p Point
-	f := FromBigInt(scalar)
-	PrecomputeBase2()
-	b.ResetTimer()
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		p.ScalarBaseMult2(f).ToAffine(&p)
-	}
 }
 
 func BenchmarkCurveP256Add(b *testing.B) {
@@ -146,20 +134,6 @@ func BenchmarkInverseBigInt(b *testing.B) {
 	bigInt := p.Z.ToBigInt()
 	for i := 0; i < b.N; i++ {
 		b4.ModInverse(bigInt, P)
-	}
-}
-
-func BenchmarkFastInverse(b *testing.B) {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	b2 := new(big.Int).Rand(r, P)
-	e := FromBigInt(b2)
-	var p Point
-	p.ScalarBaseMult(e)
-	b.ReportAllocs()
-	var ee FieldElement
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		ee.FastInverse(&p.Z)
 	}
 }
 
@@ -274,14 +248,6 @@ func BenchmarkMul2(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		mul2(&p2, &p)
-	}
-}
-
-func BenchmarkPrecompute(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		precomputed = false
-		PrecomputeBase()
 	}
 }
 
