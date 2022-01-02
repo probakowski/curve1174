@@ -27,6 +27,6 @@ Operations on curve return point in extended coordinates. To get simple x/y valu
 coordinates with `(*Point).ToAffine` method. This call is expensive so be sure to avoid it for
 intermediate values if possible.
 
-Finally, `*FieldElement` satisfy fmt package's Formatter interface for formatted printing.
+Finally, `*Point` and `*FieldElement` satisfy fmt package's Formatter interface for formatted printing.
 */
 package curve1174
