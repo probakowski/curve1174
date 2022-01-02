@@ -1,5 +1,3 @@
-//Package curve1174 implements operations on Curve1174. It's Edwards curve with equation x^2+y^2 = 1-1174x^2y^2 over
-//finite field F_p, p=2^251-9. It was introduced by Bernstein, Hamburg, Krasnova, and Lange in 2013 (https://eprint.iacr.org/2013/325)
 package curve1174
 
 import (
