@@ -7,9 +7,16 @@ import (
 	"math/bits"
 )
 
+//P3 is 4th (highest) digit (base 2^64) of P=2^251-9
 const P3 uint64 = 0x07ffffffffffffff
+
+//P2 is 3rd digit (base 2^64) of P=2^251-9
 const P2 uint64 = 0xffffffffffffffff
+
+//P1 is 2nd digit (base 2^64) of P=2^251-9
 const P1 uint64 = 0xffffffffffffffff
+
+//P0 is 1st (lowest) digit (base 2^64) of P=2^251-9
 const P0 uint64 = 0xfffffffffffffff7
 
 //UOne represents 1
@@ -107,7 +114,7 @@ func (out *FieldElement) sqrTimes(p *FieldElement, n int) *FieldElement {
 	return out
 }
 
-//Equals checks if 2 field elemets has the same value
+//Equals checks if 2 field elements has the same value
 func (out *FieldElement) Equals(p2 *FieldElement) bool {
 	return out[0] == p2[0] && out[1] == p2[1] && out[2] == p2[2] && out[3] == p2[3]
 }
@@ -148,22 +155,26 @@ func FromBigInt(b1 *big.Int) *FieldElement {
 	return p.SetBigInt(b1)
 }
 
-func (out FieldElement) String() string {
-	return fmt.Sprintf("%x%016x%016x%016x", out[3], out[2], out[1], out[0])
+func (out *FieldElement) String() string {
+	return fmt.Sprintf("%x", out)
 }
 
-func (out FieldElement) Format(s fmt.State, c rune) {
+//Format to implement fmt.Formatter interface
+func (out *FieldElement) Format(s fmt.State, c rune) {
 	out.ToBigInt().Format(s, c)
 }
 
+//IsOne checks if out==1
 func (out *FieldElement) IsOne() bool {
 	return out[0] == 1 && out[1]|out[2]|out[3] == 0
 }
 
+//IsZero checks if out==0
 func (out *FieldElement) IsZero() bool {
 	return out[0]|out[1]|out[2]|out[3] == 0
 }
 
+//Cmp compares 2 field elements. Can be used for sorting
 func (out *FieldElement) Cmp(p2 *FieldElement) int {
 	for i := 3; i >= 0; i-- {
 		if out[i] > p2[i] {

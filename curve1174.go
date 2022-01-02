@@ -10,16 +10,16 @@ import (
 //P is order of F_p, 2^251-9
 var P, _ = new(big.Int).SetString("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7", 16)
 
-//UBase is base point of curve in affine coordinates (UBase.Z == 1)
-var UBase = &Point{
+//Base is base point of curve in affine coordinates (Base.Z == 1)
+var Base = &Point{
 	X: FieldElement{0x16123f27bce29eda, 0xc021d96a492ecd65, 0x9343aee7c029a190, 0x37fbb0cea308c47},
 	Y: FieldElement{0xa4ccb1bf9b46360e, 0x4fe2dee2af3f976b, 0x6656841169840e0c, 0x6b72f82d47fb7cc},
 	Z: *UOne,
 	T: FieldElement{0xfb1ebfece06620ec, 0x9c6c6daf574e84cb, 0x5083299c2d40b958, 0x18b74129cf1e5d9},
 }
 
-//UE is identity element of curve's group (x:0, y:1)
-var UE = &Point{
+//E is identity element of curve's group (x:0, y:1)
+var E = &Point{
 	X: UZero,
 	Y: *UOne,
 	Z: *UOne,
@@ -43,8 +43,32 @@ func (p *Point) Set(p2 *Point) *Point {
 	return p
 }
 
-func (p Point) String() string {
-	return fmt.Sprintf("Curve1174 Point\nX:%x\nY:%x\nZ:%x\nT:%x", p.X, p.Y, p.Z, p.T)
+func (p *Point) Format(s fmt.State, c rune) {
+	switch c {
+	case 'v':
+		if s.Flag('#') {
+			_, _ = fmt.Fprintf(s, "%T", p)
+		}
+		if s.Flag('#') || s.Flag('+') {
+			_, _ = fmt.Fprintf(s, "{X:%x Y:%x Z:%x T:%x}", p.X, p.Y, p.Z, p.T)
+		} else {
+			_, _ = fmt.Fprintf(s, "{%x %x %x %x}", p.X, p.Y, p.Z, p.T)
+		}
+	case 'x', 'X', 'd', 'o', 'O', 'b':
+		_, _ = fmt.Fprintf(s, "{")
+		p.X.ToBigInt().Format(s, c)
+		_, _ = fmt.Fprintf(s, " ")
+		p.Y.ToBigInt().Format(s, c)
+		_, _ = fmt.Fprintf(s, " ")
+		p.Z.ToBigInt().Format(s, c)
+		_, _ = fmt.Fprintf(s, " ")
+		p.T.ToBigInt().Format(s, c)
+		_, _ = fmt.Fprintf(s, "}")
+	}
+}
+
+func (p *Point) String() string {
+	return fmt.Sprintf("%#v", p)
 }
 
 //ToAffine transforms point pp to affine coordinates and store result in p (p.Z==1)
@@ -65,9 +89,10 @@ func (p *Point) Equals(p2 *Point) bool {
 }
 
 //ScalarMult multiplies point on curve sp by scalar b (b<2^251-9) and stores result in p. Execution time doesn't depend on b.
-func (p *Point) ScalarMult(sp *Point, b *FieldElement) *Point {
-	el := [16]Point{*UE, *sp}
-	p.Set(UE)
+func (p *Point) ScalarMult(sp *Point,
+	b *FieldElement) *Point {
+	el := [16]Point{*E, *sp}
+	p.Set(E)
 	el[2].Double(sp)
 	el[3].Add(&el[2], &el[1])
 	el[4].Double(&el[2])
@@ -120,7 +145,8 @@ func (p *Point) ScalarMult(sp *Point, b *FieldElement) *Point {
 
 //AddZ1 adds two points on curve and store results in p. p2 has to be in affine coordinates (p2.Z == 1)
 //Formula based on https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#addition-madd-2008-hwcd
-func (p *Point) AddZ1(p1, p2 *Point) *Point {
+func (p *Point) AddZ1(p1,
+	p2 *Point) *Point {
 	var a, b, c, d, e, e1, f, g, h FieldElement
 	a.Mul(&p1.X, &p2.X)
 	b.Mul(&p1.Y, &p2.Y)
@@ -140,7 +166,8 @@ func (p *Point) AddZ1(p1, p2 *Point) *Point {
 
 //Add adds any two points on curve and store results in p.
 //Formula based on https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#addition-add-2008-hwcd
-func (p *Point) Add(p1, p2 *Point) *Point {
+func (p *Point) Add(p1,
+	p2 *Point) *Point {
 	var a, b, c, d, e, e1, f, g, h FieldElement
 	a.Mul(&p1.X, &p2.X)
 	b.Mul(&p1.Y, &p2.Y)
@@ -159,7 +186,8 @@ func (p *Point) Add(p1, p2 *Point) *Point {
 }
 
 //addToProjective adds two points on curve store result in p. Result is in projective coordinates (p.T is not correct!)
-func (p *Point) addToProjective(p1, p2 *Point) *Point {
+func (p *Point) addToProjective(p1,
+	p2 *Point) *Point {
 	var a, b, c, d, e, e1, f, g, h FieldElement
 	a.Mul(&p1.X, &p2.X)
 	b.Mul(&p1.Y, &p2.Y)

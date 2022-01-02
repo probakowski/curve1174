@@ -12,20 +12,20 @@ const testsNumber = 1 + percentilesNumber + 1
 const enoughMeasurements = 10000
 const percentilesNumber = 100
 
-type Timer struct {
+type timer struct {
 	startCount uint64
 	endCount   uint64
 }
 
-func (t *Timer) Start() {
+func (t *timer) Start() {
 	t.startCount = gotsc.BenchStart()
 }
 
-func (t *Timer) End() {
+func (t *timer) End() {
 	t.endCount = gotsc.BenchEnd()
 }
 
-func (t *Timer) count() uint64 {
+func (t *timer) count() uint64 {
 	return t.endCount - t.startCount
 }
 
@@ -42,14 +42,14 @@ func preparePercentiles(ticks []uint64) (percentiles []uint64) {
 	return percentiles
 }
 
-type Ctx struct {
-	stats       [101]Stat
+type ctx struct {
+	stats       [101]stat
 	percentiles []uint64
 }
 
-func (ctx *Ctx) Measure(testMethod func(timer *Timer, random bool, vector int), randomVectors, iterationCount int) float64 {
+func (ctx *ctx) measure(testMethod func(timer *timer, random bool, vector int), randomVectors, iterationCount int) float64 {
 	rand.Seed(time.Now().UnixNano())
-	//var stats [testsNumber]Stat
+	//var stats [testsNumber]stat
 	ticks := make([]uint64, iterationCount)
 	tests := make([]int, iterationCount)
 	classes := make([]int, iterationCount)
@@ -58,7 +58,7 @@ func (ctx *Ctx) Measure(testMethod func(timer *Timer, random bool, vector int), 
 		classes[i] = rand.Intn(2)
 	}
 	for i := 0; i < iterationCount; i++ {
-		timer := new(Timer)
+		timer := new(timer)
 		testMethod(timer, classes[i] == 1, tests[i])
 		ticks[i] = timer.count()
 	}
@@ -89,20 +89,20 @@ func (ctx *Ctx) Measure(testMethod func(timer *Timer, random bool, vector int), 
 	return max
 }
 
-type Stat struct {
+type stat struct {
 	mean  [2]float64
 	m2    [2]float64
 	count [2]float64
 }
 
-func (s *Stat) push(ticks uint64, class int) {
+func (s *stat) push(ticks uint64, class int) {
 	s.count[class]++
 	delta := float64(ticks) - s.mean[class]
 	s.mean[class] += delta / s.count[class]
 	s.m2[class] += delta * (float64(ticks) - s.mean[class])
 }
 
-func (s *Stat) compute() float64 {
+func (s *stat) compute() float64 {
 	v0 := s.m2[0] / (s.count[0] - 1)
 	v1 := s.m2[1] / (s.count[1] - 1)
 	num := s.mean[0] - s.mean[1]

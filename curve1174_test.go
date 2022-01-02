@@ -9,15 +9,15 @@ import (
 
 func TestAddingNeutralElement(t *testing.T) {
 	var out Point
-	out.Add(UBase, UE)
+	out.Add(Base, E)
 	out.ToAffine(&out)
-	if !UBase.Equals(&out) {
-		t.Error("not equal", UBase, out)
+	if !Base.Equals(&out) {
+		t.Error("not equal", Base, out)
 	}
-	out.Add(UE, UE).Add(&out, UE)
+	out.Add(E, E).Add(&out, E)
 	out.ToAffine(&out)
-	if !UE.Equals(&out) {
-		t.Error("not equal", UBase, out)
+	if !E.Equals(&out) {
+		t.Error("not equal", Base, out)
 	}
 }
 
@@ -35,17 +35,17 @@ func TestSpecificDoubling(t *testing.T) {
 
 func TestDoublingNeutralElement(t *testing.T) {
 	var d1, d2 Point
-	d1.Double(UE).Double(&d1)
+	d1.Double(E).Double(&d1)
 	d1.ToAffine(&d1)
-	if !d1.Equals(UE) {
+	if !d1.Equals(E) {
 		t.Error("not equal", d1, "\n", d2)
 	}
 }
 
 func TestDoubling(t *testing.T) {
 	var d1, d2 Point
-	d1.Add(UBase, UBase).ToAffine(&d1)
-	d2.Double(UBase).ToAffine(&d2)
+	d1.Add(Base, Base).ToAffine(&d1)
+	d2.Double(Base).ToAffine(&d2)
 	if !d1.Equals(&d2) {
 		t.Error("not equal", d1, "\n", d2)
 	}
@@ -59,7 +59,7 @@ func TestSpecificScalarBaseMult(t *testing.T) {
 		b := FromBigInt(b2)
 		var p1, p2 Point
 		p1.ScalarBaseMult(b).ToAffine(&p1)
-		p2.ScalarMult(UBase, b).ToAffine(&p2)
+		p2.ScalarMult(Base, b).ToAffine(&p2)
 		if !p1.Equals(&p2) {
 			t.Error(b, p1, p2)
 		}
@@ -74,18 +74,18 @@ func TestScalarBaseMult(t *testing.T) {
 	}, func(res *big.Int, x *big.Int, y *big.Int) {
 		a := FromBigInt(x)
 		var p Point
-		p.ScalarMult(UBase, a).ToAffine(&p)
+		p.ScalarMult(Base, a).ToAffine(&p)
 		res.Set(p.X.ToBigInt())
 	}, 10000)
 }
 
 func TestScalarMult(t *testing.T) {
 	var b, mult Point
-	b.Set(UE)
+	b.Set(E)
 	for i := 0; i < 5; i++ {
-		b.Add(&b, UBase)
+		b.Add(&b, Base)
 	}
-	mult.ScalarMult(UBase, &FieldElement{5})
+	mult.ScalarMult(Base, &FieldElement{5})
 	mult.ToAffine(&mult)
 	b.ToAffine(&b)
 	if !mult.Equals(&b) {

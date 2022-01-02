@@ -12,11 +12,11 @@ var scalar, _ = new(big.Int).SetString("5ffffff23ffffffffffff1758603537581ffffff
 
 func BenchmarkCurve1174Add(b *testing.B) {
 	var p1, p2 Point
-	p1.Add(UBase, UBase)
+	p1.Add(Base, Base)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p2.Add(UBase, &p1)
+		p2.Add(Base, &p1)
 	}
 }
 
@@ -24,7 +24,7 @@ func BenchmarkCurve1174Double(b *testing.B) {
 	var p Point
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.Double(UBase)
+		p.Double(Base)
 	}
 }
 
@@ -33,7 +33,7 @@ func BenchmarkCurve1174ScalarMult(b *testing.B) {
 	f := FromBigInt(scalar)
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.ScalarMult(UBase, f).ToAffine(&p)
+		p.ScalarMult(Base, f).ToAffine(&p)
 	}
 }
 

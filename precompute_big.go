@@ -6,11 +6,11 @@ var precomputedBase [32][256]Point
 
 func init() {
 	var p Point
-	p.Set(UBase)
+	p.Set(Base)
 	sp := &p
 	for i := 0; i < 32; i++ {
 		el := &precomputedBase[i]
-		el[0].Set(UE)
+		el[0].Set(E)
 		el[1].Set(sp)
 		for i := 2; i < 255; i += 2 {
 			el[i].Double(&el[i-1]).ToAffine(&el[i])
@@ -20,7 +20,7 @@ func init() {
 	}
 }
 
-//ScalarBaseMult multiplies base point UBase by scalar b (b<2^251-9) and stores result in p. Execution time doesn't depend on b.
+//ScalarBaseMult multiplies base point Base by scalar b (b<2^251-9) and stores result in p. Execution time doesn't depend on b.
 func (p *Point) ScalarBaseMult(b *FieldElement) *Point {
 	index := b[0] & 0xFF
 	p.Set(&precomputedBase[0][index])
