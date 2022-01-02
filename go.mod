@@ -1,4 +1,4 @@
-module przemko-robakowski.pl/curve1174
+module github.com/probakowski/curve1174
 
 go 1.17
 
