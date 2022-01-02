@@ -37,6 +37,9 @@ func main() {
 	fastInverse()
 	sqrFunc()
 
+	ShlFunc()
+	Shl2Func()
+
 	Generate()
 }
 
@@ -730,4 +733,54 @@ func mod() {
 	for i := 0; i < 4; i++ {
 		CMOVQCC(regs[i+4], regs[i])
 	}
+}
+
+func ShlFunc() {
+	TEXT("shl", NOSPLIT, "func(res, x *[8]uint64)")
+	Pragma("noescape")
+	xPtr = Load(Param("x"), GP64())
+	resPtr = Load(Param("res"), GP64())
+	for i := range regs {
+		MOVQ(mem(xPtr, i), regs[i])
+	}
+	SHLQ(Imm(1), regs[6], regs[7])
+	SHLQ(Imm(1), regs[5], regs[6])
+	SHLQ(Imm(1), regs[4], regs[5])
+	SHLQ(Imm(1), regs[3], regs[4])
+	SHLQ(Imm(1), regs[2], regs[3])
+	SHLQ(Imm(1), regs[1], regs[2])
+	SHLQ(Imm(1), regs[1])
+	for i := range regs {
+		MOVQ(regs[i], mem(resPtr, i))
+	}
+
+	RET()
+}
+
+func Shl2Func() {
+	TEXT("shl2", NOSPLIT, "func(res, x *[8]uint64)")
+	Pragma("noescape")
+	xPtr = Load(Param("x"), GP64())
+	resPtr = Load(Param("res"), GP64())
+	for i := range regs {
+		MOVQ(mem(xPtr, i), regs[i])
+	}
+
+	for i := 7; i > 1; i-- {
+		shl(i)
+	}
+	SHLQ(Imm(1), regs[1])
+	for i := range regs {
+		MOVQ(regs[i], mem(resPtr, i))
+	}
+
+	RET()
+}
+
+func shl(i int) {
+	tmp := GP64()
+	MOVQ(regs[i-1], tmp)
+	SHRQ(Imm(63), tmp)
+	SHLQ(Imm(1), regs[i])
+	ORQ(regs[i], tmp)
 }
