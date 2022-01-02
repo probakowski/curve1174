@@ -1,6 +1,10 @@
 # curve1174
-curve1174 is a Go library implementing operations on Curve1174. It's Edwards curve with equation `x^2+y^2 = 1-1174x^2y^2`
-over finite field `Fp, p=2^251-9`. It was introduced by [Bernstein, Hamburg, Krasnova, and Lange](https://eprint.iacr.org/2013/325) in 2013
+curve1174 is a Go library implementing operations on Curve1174. It's Edwards curve with equation 
+
+```x^2+y^2 = 1-1174x^2y^2```
+
+over finite field `Fp, p=2^251-9`. It was introduced by 
+[Bernstein, Hamburg, Krasnova, and Lange](https://eprint.iacr.org/2013/325) in 2013
 
 [![Build](https://github.com/probakowski/curve1174/actions/workflows/go.yml/badge.svg)](https://github.com/probakowski/curve1174/actions/workflows/go.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/probakowski/curve1174)](https://goreportcard.com/report/github.com/probakowski/curve1174)
