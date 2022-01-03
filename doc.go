@@ -1,6 +1,6 @@
 /*
 Package curve1174 implements operations on Curve1174. It's Edwards curve with equation `x^2+y^2 = 1-1174x^2y^2`
-over finite field `Fp, p=2^251-9`. It was introduced by [Bernstein, Hamburg, Krasnova, and Lange](https://eprint.iacr.org/2013/325) in 2013
+over finite field `Fp, p=2^251-9`. It was introduced by Bernstein, Hamburg, Krasnova, and Lange(https://eprint.iacr.org/2013/325) in 2013.
 
 Each point on curve is represented by `curve1174.Point` object. Base point is provided in `curve1174.Base`,
 identity element of the curve (`x=0, y=1`) is `curve1174.E`.
@@ -26,6 +26,16 @@ Methods usually return the incoming receiver as well, to enable simple call chai
 Operations on curve return point in extended coordinates. To get simple x/y value they have to be converted to affine
 coordinates with `(*Point).ToAffine` method. This call is expensive so be sure to avoid it for
 intermediate values if possible.
+
+All operations (both in the underlying field and on the curve) are designed to be constant time
+(time doesn't depend on points/elements selected).
+
+On amd64 there's specialized assembler code to speed up operations, you can disable it with tag `curve1174_purego`.
+The code is generated in from `gen/asm.go` using `avo`(https://github.com/mmcloughlin/avo).
+
+Base point multiplication on the curve uses precomputed table that greatly speeds up computation in common cases (like
+generating public key). It costs ~131kB of heap, you can disable it with tag `curve1174_no_precompute`. If you can spend
+more heap you can use tag `curve1174_precompute_big` which is even faster but eats up 1MB of heap.
 
 Finally, `*Point` and `*FieldElement` satisfy fmt package's Formatter interface for formatted printing.
 */

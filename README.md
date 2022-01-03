@@ -60,4 +60,14 @@ Operations on curve return point in extended coordinates. To get simple x/y valu
 coordinates with `(*Point).ToAffine` method. This call is expensive so be sure to avoid it for 
 intermediate values if possible.
 
+All operations (both in the underlying field and on the curve) are designed to be constant time 
+(time doesn't depend on points/elements selected). 
+
+On amd64 there's specialized assembler code to speed up operations, you can disable it with tag `curve1174_purego`.
+The code is generated in from `gen/asm.go` using [avo](https://github.com/mmcloughlin/avo).
+
+Base point multiplication on the curve uses precomputed table that greatly speeds up computation in common cases (like
+generating public key). It costs ~131kB of heap, you can disable it with tag `curve1174_no_precompute`. If you can spend
+more heap you can use tag `curve1174_precompute_big` which is even faster but eats up 1MB of heap.
+
 Finally, `*Point` and `*FieldElement` satisfy fmt package's Formatter interface for formatted printing.

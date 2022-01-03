@@ -41,6 +41,7 @@ func (p *Point) Set(p2 *Point) *Point {
 	return p
 }
 
+//Format to implement fmt.Formatter interface
 func (p *Point) Format(s fmt.State, c rune) {
 	switch c {
 	case 'v':

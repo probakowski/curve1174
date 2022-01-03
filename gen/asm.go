@@ -37,8 +37,8 @@ func main() {
 	fastInverse()
 	sqrFunc()
 
-	ShlFunc()
-	Shl2Func()
+	shlFunc()
+	shl2Func()
 
 	Generate()
 }
@@ -735,7 +735,7 @@ func mod() {
 	}
 }
 
-func ShlFunc() {
+func shlFunc() {
 	TEXT("shl", NOSPLIT, "func(res, x *[8]uint64)")
 	Pragma("noescape")
 	xPtr = Load(Param("x"), GP64())
@@ -757,7 +757,7 @@ func ShlFunc() {
 	RET()
 }
 
-func Shl2Func() {
+func shl2Func() {
 	TEXT("shl2", NOSPLIT, "func(res, x *[8]uint64)")
 	Pragma("noescape")
 	xPtr = Load(Param("x"), GP64())
