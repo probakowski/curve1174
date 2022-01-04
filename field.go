@@ -83,27 +83,22 @@ func (out *FieldElement) Set(p2 *FieldElement) *FieldElement {
 }
 
 //Inverse sets out to be inverse of p2 mod 2^251-9 (out * p2 == 1 | 2^251-9). It uses Euler's theorem and computes
-//inverse by raising p2 to power 2^251-11 (m=2^251-9 is prime, a^-1 == a^(m-2) | m). Execution time doesn't depend on value
+//inverse by raising p2 to power 2^251-11 (m=2^251-9 is prime, a^-1 == a^(m-2) | m). Execution time doesn't depend on value.
+//Addition chain from https://github.com/mmcloughlin/addchain/blob/master/doc/results.md#curve1174-field-inversion (250sqr+13mul)
 func (out *FieldElement) Inverse(p2 *FieldElement) *FieldElement {
-	var p3, pF, p2F, p4F, p8F, p16F, p32F FieldElement
-	p3.Sqr(p2).Mul(&p3, p2)
-	pF.sqrTimes(&p3, 2).Mul(&pF, &p3)
-	p2F.sqrTimes(&pF, 4).Mul(&p2F, &pF)
-	p4F.sqrTimes(&p2F, 8).Mul(&p4F, &p2F)
-	p8F.sqrTimes(&p4F, 16).Mul(&p8F, &p4F)
-	p16F.sqrTimes(&p8F, 32).Mul(&p16F, &p8F)
-	p32F.sqrTimes(&p16F, 64).Mul(&p32F, &p16F)
-	out.sqrTimes(&p32F, 64).Mul(out, &p16F)
-	out.sqrTimes(out, 32).Mul(out, &p8F)
-	out.sqrTimes(out, 16).Mul(out, &p4F)
-	out.sqrTimes(out, 4).Mul(out, &pF)
-	out.sqrTimes(out, 2).Mul(out, &p3)
-	out.Sqr(out).Mul(out, p2)
-	out.sqrTimes(out, 2).Mul(out, p2)
-	out.sqrTimes(out, 2)
-	out.Mul(out, p2)
-
-	return out
+	var x2, x3, x6, x7, x14, x15, x30, x60, x120, x240, x247 FieldElement
+	x2.Sqr(p2).Mul(&x2, p2)
+	x3.Sqr(&x2).Mul(&x3, p2)
+	x6.sqrTimes(&x3, 3).Mul(&x6, &x3)
+	x7.Sqr(&x6).Mul(&x7, p2)
+	x14.sqrTimes(&x7, 7).Mul(&x14, &x7)
+	x15.Sqr(&x14).Mul(&x15, p2)
+	x30.sqrTimes(&x15, 15).Mul(&x30, &x15)
+	x60.sqrTimes(&x30, 30).Mul(&x60, &x30)
+	x120.sqrTimes(&x60, 60).Mul(&x120, &x60)
+	x240.sqrTimes(&x120, 120).Mul(&x240, &x120)
+	x247.sqrTimes(&x240, 7).Mul(&x247, &x7)
+	return out.sqrTimes(&x247, 2).Mul(out, p2).sqrTimes(out, 2).Mul(out, p2)
 }
 
 func (out *FieldElement) sqrTimes(p *FieldElement, n int) *FieldElement {
