@@ -144,8 +144,7 @@ func (p *Point) ScalarMult(sp *Point,
 
 //AddZ1 adds two points on curve and store results in p. p2 has to be in affine coordinates (p2.Z == 1)
 //Formula based on https://www.hyperelliptic.org/EFD/g1p/auto-twisted-extended.html#addition-madd-2008-hwcd
-func (p *Point) AddZ1(p1,
-	p2 *Point) *Point {
+func (p *Point) AddZ1(p1, p2 *Point) *Point {
 	var a, b, c, d, e, e1, f, g, h FieldElement
 	a.Mul(&p1.X, &p2.X)
 	b.Mul(&p1.Y, &p2.Y)

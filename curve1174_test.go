@@ -96,6 +96,7 @@ func TestScalarMult(t *testing.T) {
 func TestAdd(t *testing.T) {
 	randomTest(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
 		add(res, x, y)
+		mod(res, res)
 	}, func(res *big.Int, x *big.Int, y *big.Int) {
 		res.Add(x, y)
 	})
@@ -104,6 +105,7 @@ func TestAdd(t *testing.T) {
 func TestSub(t *testing.T) {
 	randomTest(t, func(res, x, y *FieldElement) {
 		sub(res, x, y)
+		mod(res, res)
 	}, func(res, x, y *big.Int) {
 		res.Sub(x, y)
 	})

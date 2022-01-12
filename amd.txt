@@ -1,0 +1,378 @@
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	396200041	         3.049 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  398293	      3018 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  414348	      2870 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        12.00 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	132261849	         9.137 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	351397776	         3.336 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	390580833	         3.021 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	150926510	         8.073 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	435215544	         2.833 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	174439317	         7.050 ns/op
+BenchmarkShl2-16             	146907429	         8.165 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	19.013s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	393437540	         3.065 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  420154	      3048 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  428890	      2863 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	98576926	        11.81 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	133850167	         9.203 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	360575168	         3.340 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	399712165	         3.076 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	149147394	         8.055 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	420033168	         2.854 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	156451881	         8.264 ns/op
+BenchmarkShl2-16             	121912087	         8.322 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.309s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	373794874	         3.361 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  365031	      3285 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  423852	      2813 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        11.79 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	121255760	        10.50 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	352813561	         3.982 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	331421083	         3.689 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	100000000	        10.17 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	360532676	         2.896 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	158405946	         8.284 ns/op
+BenchmarkShl2-16             	146377500	         8.083 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	17.469s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	378751222	         3.127 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  408380	      3096 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  432421	      2854 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        12.12 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	131475751	         9.162 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	354169347	         3.381 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	393617607	         3.071 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	145787365	         8.182 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	430963068	         2.845 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	172966245	         6.894 ns/op
+BenchmarkShl2-16             	150898568	         7.987 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.089s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	378330982	         3.436 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  394218	      2924 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  431920	      2814 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        11.85 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	132735913	         9.202 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	336060890	         3.385 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	389292882	         3.068 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	147959050	         8.011 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	422192779	         2.795 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	171774450	         6.946 ns/op
+BenchmarkShl2-16             	150376532	         8.061 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.777s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	386989148	         3.055 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  389683	      2955 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  411367	      2878 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	97924386	        12.34 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	133775097	         9.203 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	353838999	         3.358 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	392825587	         3.036 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	148826802	         7.958 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	429692454	         2.741 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	171890047	         6.923 ns/op
+BenchmarkShl2-16             	151070856	         7.972 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	17.786s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	380654403	         3.068 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  372856	      3112 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  410685	      3004 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        12.29 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        11.08 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	345119073	         3.339 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	378180298	         3.055 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	144895702	         8.189 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	432466003	         2.734 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	164324472	         7.094 ns/op
+BenchmarkShl2-16             	145974504	         8.074 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	17.837s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	397088397	         3.069 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  380022	      2917 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  422154	      2912 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        11.79 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	133273944	         9.136 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	358998122	         3.589 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	388260277	         3.005 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	148123898	         8.070 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	429908247	         2.853 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	165071113	         8.061 ns/op
+BenchmarkShl2-16             	125106560	         8.311 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.097s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	329590983	         3.534 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  367076	      3338 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  376316	      3229 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	88165429	        13.70 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.42 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	313836744	         3.416 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	388567578	         3.389 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	132738961	         8.344 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	440006696	         2.713 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	162367940	         7.594 ns/op
+BenchmarkShl2-16             	130735659	         9.102 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	17.136s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	350684356	         3.489 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  369998	      3310 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  434336	      2857 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	93539856	        11.86 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	131310794	         9.524 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	329589396	         3.737 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	354758182	         3.329 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	100000000	        10.45 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	375144787	         3.172 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	149169518	         8.029 ns/op
+BenchmarkShl2-16             	130157294	         9.143 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.384s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	347267395	         3.106 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  399596	      3107 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  418984	      2901 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        11.85 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	133202258	         8.978 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	354841012	         3.341 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	391652647	         3.065 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	148011789	         8.093 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	420323894	         2.789 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	174104640	         7.828 ns/op
+BenchmarkShl2-16             	131186953	         9.069 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	19.068s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	346900869	         3.448 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  339334	      3465 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  375510	      3024 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	98966500	        11.94 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	132103874	         8.992 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	361903498	         3.327 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	394104498	         3.072 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	148558556	         8.188 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	436744359	         3.061 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	160216251	         7.288 ns/op
+BenchmarkShl2-16             	146196064	         8.758 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.111s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	397469722	         3.007 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  410814	      2819 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  430083	      2801 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	95141126	        13.15 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.71 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	348556338	         3.808 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	357708784	         3.340 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	138961893	         8.528 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	417170247	         3.049 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	135292987	         9.444 ns/op
+BenchmarkShl2-16             	122243736	         9.154 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	17.517s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	347935740	         3.492 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  344392	      3226 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  376030	      3205 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	88229253	        13.53 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.89 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	338590734	         3.370 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	356404656	         3.243 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	151745260	         7.980 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	438431349	         2.888 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	165087428	         7.013 ns/op
+BenchmarkShl2-16             	149665656	         8.197 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	16.889s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	347775564	         3.606 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  325224	      3269 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  370848	      3115 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	100000000	        11.99 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	125399809	        10.11 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	295970970	         3.877 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	373160917	         3.494 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	132437736	         8.237 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	435484837	         2.738 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	165600649	         7.019 ns/op
+BenchmarkShl2-16             	132986973	         8.845 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.135s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	336444802	         4.116 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  352314	      3333 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  355316	      3283 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	90462834	        13.43 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.16 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	315888318	         3.717 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	376803519	         3.235 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	144360381	         9.589 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	372406762	         3.187 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	151416984	         8.428 ns/op
+BenchmarkShl2-16             	100000000	        10.10 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	17.425s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	335292099	         3.509 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  353223	      3313 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  360278	      3235 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	85641300	        13.49 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.25 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	300255472	         3.927 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	342065148	         3.446 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	132882180	         8.205 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	422499193	         2.873 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	163029315	         6.948 ns/op
+BenchmarkShl2-16             	142963670	         8.983 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	16.952s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	322489176	         3.633 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  341594	      3268 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  373368	      3225 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	88022770	        13.63 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.52 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	310378108	         4.154 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	352497120	         3.468 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	131718205	         8.178 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	360060747	         3.121 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	148397522	         7.988 ns/op
+BenchmarkShl2-16             	100000000	        10.25 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	16.094s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	350204274	         3.496 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  361756	      3361 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  377845	      3164 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	82777225	        12.70 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	129289268	         9.392 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	336065977	         3.368 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	371927486	         3.180 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	144892970	         9.617 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	377108338	         3.219 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	151333358	         7.948 ns/op
+BenchmarkShl2-16             	125446699	         9.219 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	18.361s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	347153770	         3.493 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  322383	      3488 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  369362	      3215 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	90315900	        13.53 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.19 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	317511372	         3.846 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	366453309	         3.450 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	127908496	         9.192 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	381367090	         3.133 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	127965715	         8.097 ns/op
+BenchmarkShl2-16             	131710546	         8.780 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	17.243s
+?   	github.com/probakowski/curve1174/gen	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/probakowski/curve1174
+cpu: Intel(R) Core(TM) i9-9980HK CPU @ 2.40GHz
+BenchmarkMod-16              	371649666	         3.140 ns/op	       0 B/op	       0 allocs/op
+BenchmarkInverseBigInt-16    	  327627	      3316 ns/op	     592 B/op	      14 allocs/op
+BenchmarkInverse-16          	  375456	      3250 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul-16              	86464630	        14.03 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulSqr-16           	100000000	        10.36 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAdd-16              	315169170	         3.839 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSub-16              	348188492	         3.100 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMulD-16             	144472824	         8.641 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMul2-16             	427967509	         2.783 ns/op	       0 B/op	       0 allocs/op
+BenchmarkShl-16              	157160095	         7.893 ns/op
+BenchmarkShl2-16             	130473979	         9.103 ns/op
+PASS
+ok  	github.com/probakowski/curve1174	16.993s
+?   	github.com/probakowski/curve1174/gen	[no test files]

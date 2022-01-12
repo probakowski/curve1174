@@ -187,6 +187,24 @@ func BenchmarkMulSqr(b *testing.B) {
 	}
 }
 
+func BenchmarkAdd2(b *testing.B) {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	var p, p2, p3 FieldElement
+	p[0] = r.Uint64()
+	p[1] = r.Uint64()
+	p[2] = r.Uint64()
+	p[3] = r.Uint64()
+	p2[0] = r.Uint64()
+	p2[1] = r.Uint64()
+	p2[2] = r.Uint64()
+	p2[3] = r.Uint64()
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		add(&p3, &p, &p2)
+	}
+}
+
 func BenchmarkAdd(b *testing.B) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	var p, p2, p3 FieldElement
