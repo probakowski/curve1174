@@ -75,9 +75,9 @@ func (p *Point) ToAffine(pp *Point) *Point {
 	var inv FieldElement
 	inv.Inverse(&pp.Z)
 	zInv := &inv
-	p.X.Mul(&pp.X, zInv)
-	p.Y.Mul(&pp.Y, zInv)
-	p.T.Mul(&pp.T, zInv)
+	p.X.Mul(&pp.X, zInv).Mod(&p.X)
+	p.Y.Mul(&pp.Y, zInv).Mod(&p.Y)
+	p.T.Mul(&pp.T, zInv).Mod(&p.T)
 	p.Z.Set(UOne)
 	return p
 }

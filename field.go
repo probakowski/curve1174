@@ -111,7 +111,8 @@ func (out *FieldElement) sqrTimes(p *FieldElement, n int) *FieldElement {
 
 //Equals checks if 2 field elements has the same value
 func (out *FieldElement) Equals(p2 *FieldElement) bool {
-	return out[0] == p2[0] && out[1] == p2[1] && out[2] == p2[2] && out[3] == p2[3]
+	var f FieldElement
+	return f.Sub(out, p2).IsZero()
 }
 
 //ToBigInt returns element value as *big.Int
@@ -166,7 +167,9 @@ func (out *FieldElement) IsOne() bool {
 
 //IsZero checks if out==0
 func (out *FieldElement) IsZero() bool {
-	return out[0]|out[1]|out[2]|out[3] == 0
+	var o FieldElement
+	o.Mod(out)
+	return o[0]|o[1]|o[2]|o[3] == 0
 }
 
 //Cmp compares 2 field elements. Can be used for sorting

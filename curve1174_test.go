@@ -12,12 +12,12 @@ func TestAddingNeutralElement(t *testing.T) {
 	out.Add(Base, E)
 	out.ToAffine(&out)
 	if !Base.Equals(&out) {
-		t.Error("not equal", Base, out)
+		t.Errorf("not equal %x %x", Base, &out)
 	}
 	out.Add(E, E).Add(&out, E)
 	out.ToAffine(&out)
 	if !E.Equals(&out) {
-		t.Error("not equal", Base, out)
+		t.Errorf("not equal: %x %x", Base, &out)
 	}
 }
 
@@ -29,7 +29,7 @@ func TestSpecificDoubling(t *testing.T) {
 	d.Z.Set(UOne)
 	d.Double(&d).ToAffine(&d)
 	if !d.X.Equals(&UZero) || !d.Y.Equals(&f) {
-		t.Error("not equal", d)
+		t.Errorf("not equal %x", &d)
 	}
 }
 
@@ -38,7 +38,7 @@ func TestDoublingNeutralElement(t *testing.T) {
 	d1.Double(E).Double(&d1)
 	d1.ToAffine(&d1)
 	if !d1.Equals(E) {
-		t.Error("not equal", d1, "\n", d2)
+		t.Errorf("not equal %x %x", &d1, &d2)
 	}
 }
 
@@ -47,7 +47,7 @@ func TestDoubling(t *testing.T) {
 	d1.Add(Base, Base).ToAffine(&d1)
 	d2.Double(Base).ToAffine(&d2)
 	if !d1.Equals(&d2) {
-		t.Error("not equal", d1, "\n", d2)
+		t.Errorf("not equal %x %x", &d1, &d2)
 	}
 }
 
@@ -138,6 +138,7 @@ func TestSqr(t *testing.T) {
 func TestMul2(t *testing.T) {
 	randomTest(t, func(res *FieldElement, x *FieldElement, y *FieldElement) {
 		mul2(res, x)
+		mod(res, res)
 	}, func(res *big.Int, x *big.Int, y *big.Int) {
 		res.Mul(x, big.NewInt(2))
 	})
@@ -180,6 +181,7 @@ func TestSpecificMul(t *testing.T) {
 		var res FieldElement
 		mul(&res, p2, p)
 		b4 := res.ToBigInt()
+		b4.Mod(b4, P)
 		if b4.Cmp(b3) != 0 {
 			t.Errorf("\n%x\n%x\n%x\n%x", b1, b2, b3, b4)
 		}
@@ -208,7 +210,7 @@ func TestSelect(t *testing.T) {
 	for i := 0; i < 16; i++ {
 		selectPoint(&res, &points, uint64(i))
 		if !res.Equals(&points[i]) {
-			t.Errorf("\n%x\n%x", res, points[i])
+			t.Errorf("\n%x\n%x", &res, &points[i])
 		}
 	}
 }
@@ -227,9 +229,11 @@ func randomTestOp(t *testing.T,
 	testsCount int) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	fails := 0
+	x := big.NewInt(1)
+	x.Lsh(x, 256)
 	for i := 0; i < testsCount; i++ {
-		b1 := new(big.Int).Rand(r, P)
-		b2 := new(big.Int).Rand(r, P)
+		b1 := new(big.Int).Rand(r, x)
+		b2 := new(big.Int).Rand(r, x)
 		p := FromBigInt(b1)
 		p2 := FromBigInt(b2)
 		var res FieldElement
@@ -268,6 +272,6 @@ func TestSqrMul(t *testing.T) {
 	sqr(&res2, &p)
 
 	if !res1.Equals(&res2) {
-		t.Errorf("\n%x\n%x", res1, res2)
+		t.Errorf("\n%x\n%x", &res1, &res2)
 	}
 }

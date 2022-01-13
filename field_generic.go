@@ -140,74 +140,70 @@ func mul(res, p1, p2 *FieldElement) {
 	r6, carry = bits.Add64(0, r6, carry)
 	r7, _ = bits.Add64(0, r7, carry)
 
-	extendedMod(res, r0, r1, r2, r3, r4, r5, r6, r7)
+	//extendedMod(res, r0, r1, r2, r3, r4, r5, r6, r7)
+	res[0] = r4 | r0
+	res[1] = r5
+	res[2] = r6
+	res[3] = r7
 }
 
 func mulD(res, p2 *FieldElement) *FieldElement {
-	r1, r0 := bits.Mul64(1174, p2[0])
-	r3, r2 := bits.Mul64(1174, p2[2])
-	hi, lo := bits.Mul64(1174, p2[1])
-	r1, carry := bits.Add64(lo, r1, 0)
-	r2, carry = bits.Add64(hi, r2, carry)
-	r3, carry = bits.Add64(0, r3, carry)
-	r4, _ := bits.Add64(0, 0, carry)
-
-	hi, lo = bits.Mul64(1174, p2[3])
-	r3, carry = bits.Add64(lo, r3, 0)
-	r4, _ = bits.Add64(hi, r4, carry)
+	r0h, r0 := bits.Mul64(1174, p2[0])
+	r1h, r1l := bits.Mul64(1174, p2[1])
+	r2h, r2l := bits.Mul64(1174, p2[2])
+	r3h, r3l := bits.Mul64(1174, p2[3])
+	r1, carry := bits.Add64(r0h, r1l, 0)
+	r2, carry := bits.Add64(r1h, r2l, carry)
+	r3, carry := bits.Add64(r2h, r3l, carry)
+	r4, _ := bits.Add64(r3h, 0, carry)
 
 	r0, carry = bits.Add64(r0, (r4<<5|r3>>59)*9, 0)
 	r1, carry = bits.Add64(r1, 0, carry)
 	r2, carry = bits.Add64(r2, 0, carry)
 	r3, _ = bits.Add64(r3&P3, 0, carry)
 
+	r0, borrow := bits.Sub64(P0, r0, 0)
+	r1, borrow = bits.Sub64(P1, r1, borrow)
+	r2, borrow = bits.Sub64(P2, r2, borrow)
+	r3, borrow = bits.Sub64(P3, r3, borrow)
+
+	r0, borrow = bits.Sub64(r0, ^(borrow-1)&288, 0)
+	res[1], borrow = bits.Sub64(r1, 0, borrow)
+	res[2], borrow = bits.Sub64(r2, 0, borrow)
+	res[3], borrow = bits.Sub64(r3, 0, borrow)
+
+	res[0] = r0 - ^(borrow-1)&288
+
 	return res
 }
 
 func mul2(res, p2 *FieldElement) {
-	res[3] = p2[2]>>63 + p2[3]<<1
-	res[2] = p2[1]>>63 + p2[2]<<1
-	res[1] = p2[0]>>63 + p2[1]<<1
-	res[0] = p2[0] << 1
-	var r0, r1, r2, r3, borrow uint64
-	r0, borrow = bits.Sub64(res[0], P0, 0)
-	r1, borrow = bits.Sub64(res[1], P1, borrow)
-	r2, borrow = bits.Sub64(res[2], P2, borrow)
-	r3, borrow = bits.Sub64(res[3], P3, borrow)
-	b0, _ := bits.Sub64(0, 0, borrow)
-	b1 := ^b0
-	res[0] = b0&res[0] | b1&r0
-	res[1] = b0&res[1] | b1&r1
-	res[2] = b0&res[2] | b1&r2
-	res[3] = b0&res[3] | b1&r3
+	add(res, p2, p2)
 }
 
 func mod(res, p *FieldElement) {
 	top := (p[3] >> 59) * 9
-	res[3] = p[3] & P3
+	r3 := p[3] & P3
 	r0, carry := bits.Add64(p[0], top, 0)
 	r1, carry := bits.Add64(p[1], 0, carry)
 	r2, carry := bits.Add64(p[2], 0, carry)
-	r3, carry := bits.Add64(res[3], 0, carry)
+	r3, _ = bits.Add64(r3, 0, carry)
 
-	r0, carry = bits.Add64(r0, ^(carry-1)&288, 0)
-	r1, carry = bits.Add64(r1, 0, carry)
-	r2, carry = bits.Add64(r2, 0, carry)
-	r3, carry = bits.Add64(r3, 0, carry)
+	rr0, borrow := bits.Sub64(r0, P0, 0)
+	rr1, borrow := bits.Sub64(r1, P1, borrow)
+	rr2, borrow := bits.Sub64(r2, P2, borrow)
+	rr3, borrow := bits.Sub64(r3, P3, borrow)
 
-	res[0], carry = bits.Sub64(r0, ^(carry-1)&288, 0)
-	res[1], carry = bits.Sub64(r1, 0, carry)
-	res[2], carry = bits.Sub64(r2, 0, carry)
-	res[3], _ = bits.Sub64(r3, 0, carry)
+	b := ^(borrow - 1)
+
+	res[0], carry = bits.Add64(rr0, P0&b, 0)
+	res[1], carry = bits.Add64(rr1, b, carry)
+	res[2], carry = bits.Add64(rr2, b, carry)
+	res[3], _ = bits.Add64(rr3, P3&b, carry)
 }
 
 func selectPoint(res *Point, table *[16]Point, index uint64) {
-	res.Set(&Point{
-		X: UZero,
-		Y: UZero,
-		Z: UZero,
-		T: UZero,
-	})
+	res.Set(&Point{X: UZero, Y: UZero, Z: UZero, T: UZero})
 	for i := 0; i < 16; i++ {
 		_, b1 := bits.Sub64(index, uint64(i), 0)
 		_, b2 := bits.Sub64(uint64(i), index, 0)
