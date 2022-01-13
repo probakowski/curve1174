@@ -37,27 +37,6 @@ func sub(res, p1, p2 *FieldElement) {
 	res[0] = r0 - ^(borrow-1)&288
 }
 
-func extendedMod(res *FieldElement, r0, r1, r2, r3, r4, r5, r6, r7 uint64) {
-	r7 = r7<<5 | r6>>59
-	r6 = r6<<5 | r5>>59
-	r5 = r5<<5 | r4>>59
-	r4 = r4<<5 | r3>>59
-
-	r3 &= P3
-
-	var carry uint64
-	r0, carry = bits.Add64(r0, r4, 0)
-	r1, carry = bits.Add64(r1, r5, carry)
-	r2, carry = bits.Add64(r2, r6, carry)
-	r3, _ = bits.Add64(r3, r7, carry)
-	res[0], carry = bits.Add64(r0, r4<<3, 0)
-	res[1], carry = bits.Add64(r1, r4>>61+r5<<3, carry)
-	res[2], carry = bits.Add64(r2, r5>>61+r6<<3, carry)
-	res[3], _ = bits.Add64(r3, r6>>61+r7<<3, carry)
-
-	mod(res, res)
-}
-
 func mulAdd(a, b, r0, r1, c uint64) (o0, o1, carry uint64) {
 	a, b = bits.Mul64(a, b)
 	o0, carry = bits.Add64(r0, b, c)
@@ -140,11 +119,35 @@ func mul(res, p1, p2 *FieldElement) {
 	r6, carry = bits.Add64(0, r6, carry)
 	r7, _ = bits.Add64(0, r7, carry)
 
-	//extendedMod(res, r0, r1, r2, r3, r4, r5, r6, r7)
-	res[0] = r4 | r0
-	res[1] = r5
-	res[2] = r6
-	res[3] = r7
+	r8 := r7 >> 59
+	r7 = r7<<5 | r6>>59
+	r6 = r6<<5 | r5>>59
+	r5 = r5<<5 | r4>>59
+	r4 = r4<<5 | r3>>59
+
+	r3 &= P3
+
+	r4a, carry := bits.Add64(r4, r4<<3, 0)
+	r5a, carry := bits.Add64(r5, r4>>61|r5<<3, carry)
+	r6a, carry := bits.Add64(r6, r5>>61|r6<<3, carry)
+	r7a, carry := bits.Add64(r7, r6>>61|r7<<3, carry)
+	r8a, _ := bits.Add64(r8, r7>>61|r8<<3, carry)
+
+	r0, carry = bits.Add64(r0, r4a, 0)
+	r1, carry = bits.Add64(r1, r5a, carry)
+	r2, carry = bits.Add64(r2, r6a, carry)
+	r3, carry = bits.Add64(r3, r7a, carry)
+	r4, _ = bits.Add64(r8a, 0, carry)
+
+	r4 = (r4<<5 | r3>>59) * 9
+
+	r3 &= P3
+
+	res[0], carry = bits.Add64(r0, r4, 0)
+	res[1], carry = bits.Add64(r1, 0, carry)
+	res[2], carry = bits.Add64(r2, 0, carry)
+	res[3], _ = bits.Add64(r3, 0, carry)
+
 }
 
 func mulD(res, p2 *FieldElement) *FieldElement {
