@@ -207,7 +207,7 @@ func mod(res, p *FieldElement) {
 }
 
 func selectPoint(res *Point, table *[16]Point, index uint64) {
-	res.Set(&Point{X: UZero, Y: UZero, Z: UZero, T: UZero})
+	res.Set(&Point{})
 	for i := 0; i < 16; i++ {
 		b1 := ^(uint64(subtle.ConstantTimeEq(int32(index), int32(i))) - 1)
 		res.X[0] |= table[i].X[0] & b1
