@@ -101,6 +101,18 @@ func (out *FieldElement) Inverse(p2 *FieldElement) *FieldElement {
 	return out.sqrTimes(&x247, 2).Mul(out, p2).sqrTimes(out, 2).Mul(out, p2)
 }
 
+func (out *FieldElement) IsEven() bool {
+	return out[0]%2 == 0
+}
+
+func (out *FieldElement) Div2(p2 *FieldElement) *FieldElement {
+	out[0] = p2[0]>>1 + p2[1]<<63
+	out[1] = p2[1]>>1 + p2[2]<<63
+	out[2] = p2[2]>>1 + p2[3]<<63
+	out[3] = p2[3] >> 1
+	return out
+}
+
 func (out *FieldElement) sqrTimes(p *FieldElement, n int) *FieldElement {
 	out.Set(p)
 	for i := 0; i < n; i++ {

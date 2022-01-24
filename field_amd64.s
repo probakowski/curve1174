@@ -5,7 +5,7 @@
 #include "textflag.h"
 
 // func mul(res *FieldElement, x *FieldElement, y *FieldElement)
-// Requires: ADX, BMI2, CMOV
+// Requires: ADX, BMI2
 TEXT ·mul(SB), NOSPLIT, $0-24
 	CMPB ·cpuSupported+0(SB), $0x01
 	JNE  mulNoAdx
@@ -114,20 +114,21 @@ TEXT ·mul(SB), NOSPLIT, $0-24
 	ADCXQ AX, R9
 	ADOXQ AX, R10
 	ADCXQ AX, R10
-	MOVQ  DI, AX
-	SHLQ  $0x05, AX
+	MOVQ  R10, AX
+	SHRQ  $0x3b, AX
 	SHLQ  $0x05, R9, R10
 	SHLQ  $0x05, R8, R9
 	SHLQ  $0x05, DI, R8
 	SHLQ  $0x05, SI, DI
-	MOVQ  $0x07ffffffffffffff, AX
-	ANDQ  AX, SI
-	MOVQ  DI, AX
-	SHLQ  $0x03, AX
+	MOVQ  $0x07ffffffffffffff, R11
+	ANDQ  R11, SI
+	XORQ  DX, DX
 	ADDQ  DI, CX
 	ADCQ  R8, BX
 	ADCQ  R9, BP
 	ADCQ  R10, SI
+	ADCQ  AX, DX
+	SHLQ  $0x03, R10, AX
 	SHLQ  $0x03, R9, R10
 	SHLQ  $0x03, R8, R9
 	SHLQ  $0x03, DI, R8
@@ -136,33 +137,14 @@ TEXT ·mul(SB), NOSPLIT, $0-24
 	ADCQ  R8, BX
 	ADCQ  R9, BP
 	ADCQ  R10, SI
-
-	// Mod 2nd stage
-	MOVQ SI, R10
-	SHRQ $0x3b, R10
-	MOVQ $0x07ffffffffffffff, AX
-	ANDQ AX, SI
-
-	// regs[7] = regs[7]*9
-	LEAQ    (R10)(R10*8), R10
-	ADDQ    R10, CX
-	ADCQ    $0x00, BX
-	ADCQ    $0x00, BP
-	ADCQ    $0x00, SI
-	MOVQ    $0xffffffffffffffff, DX
-	MOVQ    $0xfffffffffffffff7, R11
-	MOVQ    CX, DI
-	MOVQ    BX, R8
-	MOVQ    BP, R9
-	MOVQ    SI, R10
-	SUBQ    R11, DI
-	SBBQ    DX, R8
-	SBBQ    DX, R9
-	SBBQ    AX, R10
-	CMOVQCC DI, CX
-	CMOVQCC R8, BX
-	CMOVQCC R9, BP
-	CMOVQCC R10, SI
+	ADCQ  AX, DX
+	SHLQ  $0x05, SI, DX
+	ANDQ  R11, SI
+	LEAQ  (DX)(DX*8), DX
+	ADDQ  DX, CX
+	ADCQ  $0x00, BX
+	ADCQ  $0x00, BP
+	ADCQ  $0x00, SI
 
 	// Store results
 	MOVQ res+0(FP), AX
@@ -282,20 +264,21 @@ mulNoAdx:
 	ADCQ  $0x00, R8
 	ADCQ  $0x00, R9
 	ADCQ  $0x00, R10
-	MOVQ  DI, AX
-	SHLQ  $0x05, AX
+	MOVQ  R10, AX
+	SHRQ  $0x3b, AX
 	SHLQ  $0x05, R9, R10
 	SHLQ  $0x05, R8, R9
 	SHLQ  $0x05, DI, R8
 	SHLQ  $0x05, SI, DI
-	MOVQ  $0x07ffffffffffffff, AX
-	ANDQ  AX, SI
-	MOVQ  DI, AX
-	SHLQ  $0x03, AX
+	MOVQ  $0x07ffffffffffffff, R11
+	ANDQ  R11, SI
+	XORQ  DX, DX
 	ADDQ  DI, CX
 	ADCQ  R8, BX
 	ADCQ  R9, BP
 	ADCQ  R10, SI
+	ADCQ  AX, DX
+	SHLQ  $0x03, R10, AX
 	SHLQ  $0x03, R9, R10
 	SHLQ  $0x03, R8, R9
 	SHLQ  $0x03, DI, R8
@@ -304,33 +287,14 @@ mulNoAdx:
 	ADCQ  R8, BX
 	ADCQ  R9, BP
 	ADCQ  R10, SI
-
-	// Mod 2nd stage
-	MOVQ SI, R10
-	SHRQ $0x3b, R10
-	MOVQ $0x07ffffffffffffff, AX
-	ANDQ AX, SI
-
-	// regs[7] = regs[7]*9
-	LEAQ    (R10)(R10*8), R10
-	ADDQ    R10, CX
-	ADCQ    $0x00, BX
-	ADCQ    $0x00, BP
-	ADCQ    $0x00, SI
-	MOVQ    $0xffffffffffffffff, DX
-	MOVQ    $0xfffffffffffffff7, R11
-	MOVQ    CX, DI
-	MOVQ    BX, R8
-	MOVQ    BP, R9
-	MOVQ    SI, R10
-	SUBQ    R11, DI
-	SBBQ    DX, R8
-	SBBQ    DX, R9
-	SBBQ    AX, R10
-	CMOVQCC DI, CX
-	CMOVQCC R8, BX
-	CMOVQCC R9, BP
-	CMOVQCC R10, SI
+	ADCQ  AX, DX
+	SHLQ  $0x05, SI, DX
+	ANDQ  R11, SI
+	LEAQ  (DX)(DX*8), DX
+	ADDQ  DX, CX
+	ADCQ  $0x00, BX
+	ADCQ  $0x00, BP
+	ADCQ  $0x00, SI
 
 	// Store results
 	MOVQ res+0(FP), AX
@@ -341,7 +305,6 @@ mulNoAdx:
 	RET
 
 // func mulNoAdx(res *FieldElement, x *FieldElement, y *FieldElement)
-// Requires: CMOV
 TEXT ·mulNoAdx(SB), NOSPLIT, $0-24
 	MOVQ  x+8(FP), R11
 	MOVQ  res+0(FP), AX
@@ -452,20 +415,21 @@ TEXT ·mulNoAdx(SB), NOSPLIT, $0-24
 	ADCQ  $0x00, R8
 	ADCQ  $0x00, R9
 	ADCQ  $0x00, R10
-	MOVQ  DI, AX
-	SHLQ  $0x05, AX
+	MOVQ  R10, AX
+	SHRQ  $0x3b, AX
 	SHLQ  $0x05, R9, R10
 	SHLQ  $0x05, R8, R9
 	SHLQ  $0x05, DI, R8
 	SHLQ  $0x05, SI, DI
-	MOVQ  $0x07ffffffffffffff, AX
-	ANDQ  AX, SI
-	MOVQ  DI, AX
-	SHLQ  $0x03, AX
+	MOVQ  $0x07ffffffffffffff, R11
+	ANDQ  R11, SI
+	XORQ  DX, DX
 	ADDQ  DI, CX
 	ADCQ  R8, BX
 	ADCQ  R9, BP
 	ADCQ  R10, SI
+	ADCQ  AX, DX
+	SHLQ  $0x03, R10, AX
 	SHLQ  $0x03, R9, R10
 	SHLQ  $0x03, R8, R9
 	SHLQ  $0x03, DI, R8
@@ -474,33 +438,14 @@ TEXT ·mulNoAdx(SB), NOSPLIT, $0-24
 	ADCQ  R8, BX
 	ADCQ  R9, BP
 	ADCQ  R10, SI
-
-	// Mod 2nd stage
-	MOVQ SI, R10
-	SHRQ $0x3b, R10
-	MOVQ $0x07ffffffffffffff, AX
-	ANDQ AX, SI
-
-	// regs[7] = regs[7]*9
-	LEAQ    (R10)(R10*8), R10
-	ADDQ    R10, CX
-	ADCQ    $0x00, BX
-	ADCQ    $0x00, BP
-	ADCQ    $0x00, SI
-	MOVQ    $0xffffffffffffffff, DX
-	MOVQ    $0xfffffffffffffff7, R11
-	MOVQ    CX, DI
-	MOVQ    BX, R8
-	MOVQ    BP, R9
-	MOVQ    SI, R10
-	SUBQ    R11, DI
-	SBBQ    DX, R8
-	SBBQ    DX, R9
-	SBBQ    AX, R10
-	CMOVQCC DI, CX
-	CMOVQCC R8, BX
-	CMOVQCC R9, BP
-	CMOVQCC R10, SI
+	ADCQ  AX, DX
+	SHLQ  $0x05, SI, DX
+	ANDQ  R11, SI
+	LEAQ  (DX)(DX*8), DX
+	ADDQ  DX, CX
+	ADCQ  $0x00, BX
+	ADCQ  $0x00, BP
+	ADCQ  $0x00, SI
 
 	// Store results
 	MOVQ res+0(FP), AX
@@ -664,7 +609,7 @@ TEXT ·add(SB), NOSPLIT, $0-24
 	RET
 
 // func mulD(res *FieldElement, x *FieldElement)
-// Requires: ADX, BMI2, CMOV
+// Requires: ADX, BMI2
 TEXT ·mulD(SB), NOSPLIT, $0-16
 	MOVQ  x+8(FP), R11
 	MOVQ  res+0(FP), R12
@@ -697,20 +642,21 @@ TEXT ·mulD(SB), NOSPLIT, $0-16
 	ADCXQ R10, SI
 	ADOXQ R10, DI
 	ADCXQ R10, DI
-	MOVQ  SI, DX
-	SHLQ  $0x05, DX
+	MOVQ  R9, DX
+	SHRQ  $0x3b, DX
 	SHLQ  $0x05, R8, R9
 	SHLQ  $0x05, DI, R8
 	SHLQ  $0x05, SI, DI
 	SHLQ  $0x05, BP, SI
-	MOVQ  $0x07ffffffffffffff, DX
-	ANDQ  DX, BP
-	MOVQ  SI, DX
-	SHLQ  $0x03, DX
+	MOVQ  $0x07ffffffffffffff, R11
+	ANDQ  R11, BP
+	XORQ  R10, R10
 	ADDQ  SI, AX
 	ADCQ  DI, CX
 	ADCQ  R8, BX
 	ADCQ  R9, BP
+	ADCQ  DX, R10
+	SHLQ  $0x03, R9, DX
 	SHLQ  $0x03, R8, R9
 	SHLQ  $0x03, DI, R8
 	SHLQ  $0x03, SI, DI
@@ -719,45 +665,26 @@ TEXT ·mulD(SB), NOSPLIT, $0-16
 	ADCQ  DI, CX
 	ADCQ  R8, BX
 	ADCQ  R9, BP
-
-	// Mod 2nd stage
-	MOVQ BP, R9
-	SHRQ $0x3b, R9
-	MOVQ $0x07ffffffffffffff, DX
-	ANDQ DX, BP
-
-	// regs[7] = regs[7]*9
-	LEAQ    (R9)(R9*8), R9
-	ADDQ    R9, AX
-	ADCQ    $0x00, CX
-	ADCQ    $0x00, BX
-	ADCQ    $0x00, BP
-	MOVQ    $0xffffffffffffffff, R10
-	MOVQ    $0xfffffffffffffff7, R11
-	MOVQ    AX, SI
-	MOVQ    CX, DI
-	MOVQ    BX, R8
-	MOVQ    BP, R9
-	SUBQ    R11, SI
-	SBBQ    R10, DI
-	SBBQ    R10, R8
-	SBBQ    DX, R9
-	CMOVQCC SI, AX
-	CMOVQCC DI, CX
-	CMOVQCC R8, BX
-	CMOVQCC R9, BP
-	MOVQ    $0xfffffffffffffff7, DX
-	MOVQ    $0xffffffffffffffff, SI
-	MOVQ    $0xffffffffffffffff, DI
-	MOVQ    $0x07ffffffffffffff, R8
-	SUBQ    AX, DX
-	SBBQ    CX, SI
-	SBBQ    BX, DI
-	SBBQ    BP, R8
-	MOVQ    DX, (R12)
-	MOVQ    SI, 8(R12)
-	MOVQ    DI, 16(R12)
-	MOVQ    R8, 24(R12)
+	ADCQ  DX, R10
+	SHLQ  $0x05, BP, R10
+	ANDQ  R11, BP
+	LEAQ  (R10)(R10*8), R10
+	ADDQ  R10, AX
+	ADCQ  $0x00, CX
+	ADCQ  $0x00, BX
+	ADCQ  $0x00, BP
+	MOVQ  $0xfffffffffffffff7, DX
+	MOVQ  $0xffffffffffffffff, SI
+	MOVQ  $0xffffffffffffffff, DI
+	MOVQ  $0x07ffffffffffffff, R8
+	SUBQ  AX, DX
+	SBBQ  CX, SI
+	SBBQ  BX, DI
+	SBBQ  BP, R8
+	MOVQ  DX, (R12)
+	MOVQ  SI, 8(R12)
+	MOVQ  DI, 16(R12)
+	MOVQ  R8, 24(R12)
 	RET
 
 // func selectPoint(res *Point, table *[16]Point, index uint64)
@@ -964,7 +891,7 @@ store:
 	RET
 
 // func sqr(res *FieldElement, x *FieldElement)
-// Requires: ADX, BMI2, CMOV
+// Requires: ADX, BMI2
 TEXT ·sqr(SB), NOSPLIT, $0-16
 	MOVQ x+8(FP), AX
 
@@ -1041,20 +968,21 @@ TEXT ·sqr(SB), NOSPLIT, $0-16
 	MULXQ R12, R10, DX
 	ADCQ  R10, R8
 	ADCQ  DX, R9
-	MOVQ  SI, DX
-	SHLQ  $0x05, DX
+	MOVQ  R9, DX
+	SHRQ  $0x3b, DX
 	SHLQ  $0x05, R8, R9
 	SHLQ  $0x05, DI, R8
 	SHLQ  $0x05, SI, DI
 	SHLQ  $0x05, BP, SI
-	MOVQ  $0x07ffffffffffffff, DX
-	ANDQ  DX, BP
-	MOVQ  SI, DX
-	SHLQ  $0x03, DX
+	MOVQ  $0x07ffffffffffffff, R11
+	ANDQ  R11, BP
+	XORQ  R10, R10
 	ADDQ  SI, AX
 	ADCQ  DI, CX
 	ADCQ  R8, BX
 	ADCQ  R9, BP
+	ADCQ  DX, R10
+	SHLQ  $0x03, R9, DX
 	SHLQ  $0x03, R8, R9
 	SHLQ  $0x03, DI, R8
 	SHLQ  $0x03, SI, DI
@@ -1063,33 +991,14 @@ TEXT ·sqr(SB), NOSPLIT, $0-16
 	ADCQ  DI, CX
 	ADCQ  R8, BX
 	ADCQ  R9, BP
-
-	// Mod 2nd stage
-	MOVQ BP, R9
-	SHRQ $0x3b, R9
-	MOVQ $0x07ffffffffffffff, DX
-	ANDQ DX, BP
-
-	// regs[7] = regs[7]*9
-	LEAQ    (R9)(R9*8), R9
-	ADDQ    R9, AX
-	ADCQ    $0x00, CX
-	ADCQ    $0x00, BX
-	ADCQ    $0x00, BP
-	MOVQ    $0xffffffffffffffff, R10
-	MOVQ    $0xfffffffffffffff7, R11
-	MOVQ    AX, SI
-	MOVQ    CX, DI
-	MOVQ    BX, R8
-	MOVQ    BP, R9
-	SUBQ    R11, SI
-	SBBQ    R10, DI
-	SBBQ    R10, R8
-	SBBQ    DX, R9
-	CMOVQCC SI, AX
-	CMOVQCC DI, CX
-	CMOVQCC R8, BX
-	CMOVQCC R9, BP
+	ADCQ  DX, R10
+	SHLQ  $0x05, BP, R10
+	ANDQ  R11, BP
+	LEAQ  (R10)(R10*8), R10
+	ADDQ  R10, AX
+	ADCQ  $0x00, CX
+	ADCQ  $0x00, BX
+	ADCQ  $0x00, BP
 
 	// Store results
 	MOVQ res+0(FP), DX

@@ -38,93 +38,55 @@ func sub(res, p1, p2 *FieldElement) {
 	res[0] = r0 - ^(borrow-1)&288
 }
 
-func mulAdd(a, b, r0, r1, c uint64) (o0, o1, carry uint64) {
-	a, b = bits.Mul64(a, b)
-	o0, carry = bits.Add64(r0, b, c)
-	o1, carry = bits.Add64(r1, a, carry)
-	return
-}
-
-func sqr(res, p *FieldElement) {
-	//var r0, r1, r2, r3, r4, r5, r6, r7, carry uint64
-	//
-	//r2, r1 = bits.Mul64(p[0], p[1])
-	//r4, r3 = bits.Mul64(p[0], p[3])
-	//r6, r5 = bits.Mul64(p[2], p[3])
-	//
-	//r2, r3, carry = mulAdd(p[0], p[2], r2, r3, 0)
-	//r4, r5, carry = mulAdd(p[1], p[3], r4, r5, carry)
-	//r6, carry = bits.Add64(0, r6, carry)
-	//r7, _ = bits.Add64(0, r7, carry)
-	//
-	//r3, r4, carry = mulAdd(p[1], p[2], r3, r4, 0)
-	//r5, _ = bits.Add64(0, r5, carry)
-	//r5, carry = bits.Add64(0, r5, carry)
-	//r6, carry = bits.Add64(0, r6, carry)
-	//r7, _ = bits.Add64(0, r7, carry)
-	//
-	//r7 = r7<<1 | r6>>63
-	//r6 = r6<<1 | r5>>63
-	//r5 = r5<<1 | r4>>63
-	//r4 = r4<<1 | r3>>63
-	//r3 = r3<<1 | r2>>63
-	//r2 = r2<<1 | r1>>63
-	//r1 = r1 << 1
-	//
-	//carry, r0 = bits.Mul64(p[0], p[0])
-	//r1, carry = bits.Add64(r1, carry, 0)
-	//r2, r3, carry = mulAdd(p[1], p[1], r2, r3, carry)
-	//r4, r5, carry = mulAdd(p[2], p[2], r4, r5, carry)
-	//r6, r7, _ = mulAdd(p[3], p[3], r6, r7, carry)
-	//
-	//extendedMod(res, r0, r1, r2, r3, r4, r5, r6, r7)
-	mul(res, p, p)
-}
-
-func mul(res, p1, p2 *FieldElement) {
-	_, _ = p1[3], p2[3]
+func sqr(res, p1 *FieldElement) {
+	_ = p1[3]
 	var r0, r1, r2, r3, r4, r5, r6, r7, carry uint64
 
-	r1, r0 = bits.Mul64(p1[0], p2[0])
-	r3, r2 = bits.Mul64(p1[0], p2[2])
-	r5, r4 = bits.Mul64(p1[3], p2[1])
-	r7, r6 = bits.Mul64(p1[3], p2[3])
+	p01h, r1 := bits.Mul64(p1[0], p1[1])
+	p02h, p02l := bits.Mul64(p1[0], p1[2])
+	p03h, p03l := bits.Mul64(p1[0], p1[3])
+	p13h, p13l := bits.Mul64(p1[1], p1[3])
+	p23h, p23l := bits.Mul64(p1[2], p1[3])
 
-	r1, r2, carry = mulAdd(p1[1], p2[0], r1, r2, 0)
-	r3, r4, carry = mulAdd(p1[0], p2[3], r3, r4, carry)
-	r5, r6, carry = mulAdd(p1[2], p2[3], r5, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
+	r2, carry = bits.Add64(p01h, p02l, 0)
+	r3, carry = bits.Add64(p02h, p03l, carry)
+	r4, carry = bits.Add64(p03h, p13l, carry)
+	r5, carry = bits.Add64(p13h, p23l, carry)
+	r6, carry = bits.Add64(p23h, 0, carry)
+	r7, _ = bits.Add64(0, 0, carry)
 
-	r1, r2, carry = mulAdd(p1[0], p2[1], r1, r2, 0)
-	r3, r4, carry = mulAdd(p1[1], p2[2], r3, r4, carry)
-	r5, r6, carry = mulAdd(p1[3], p2[2], r5, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
+	p12h, p12l := bits.Mul64(p1[1], p1[2])
+	r3, carry = bits.Add64(r3, p12l, 0)
+	r4, carry = bits.Add64(r4, p12h, 0)
+	r5, carry = bits.Add64(r5, 0, carry)
+	r6, carry = bits.Add64(r6, 0, carry)
+	r7, _ = bits.Add64(r7, 0, carry)
 
-	r2, r3, carry = mulAdd(p1[1], p2[1], r2, r3, 0)
-	r4, r5, carry = mulAdd(p1[1], p2[3], r4, r5, carry)
-	r6, carry = bits.Add64(0, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
+	r7 = r7<<1 + r6>>63
+	r6 = r6<<1 + r5>>63
+	r5 = r5<<1 + r4>>63
+	r4 = r4<<1 + r3>>63
+	r3 = r3<<1 + r2>>63
+	r2 = r2<<1 + r1>>63
+	r1 = r1 << 1
 
-	r2, r3, carry = mulAdd(p1[2], p2[0], r2, r3, 0)
-	r4, r5, carry = mulAdd(p1[2], p2[2], r4, r5, carry)
-	r6, carry = bits.Add64(0, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
-
-	r3, r4, carry = mulAdd(p1[2], p2[1], r3, r4, 0)
-	r5, carry = bits.Add64(0, r5, carry)
-	r6, carry = bits.Add64(0, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
-
-	r3, r4, carry = mulAdd(p1[3], p2[0], r3, r4, 0)
-	r5, carry = bits.Add64(0, r5, carry)
-	r6, carry = bits.Add64(0, r6, carry)
-	r7, _ = bits.Add64(0, r7, carry)
+	p00h, r0 := bits.Mul64(p1[0], p1[0])
+	p22h, p22l := bits.Mul64(p1[2], p1[2])
+	p33h, p33l := bits.Mul64(p1[3], p1[3])
+	p11h, p11l := bits.Mul64(p1[1], p1[1])
+	r1, carry = bits.Add64(r1, p00h, 0)
+	r2, carry = bits.Add64(r2, p11l, carry)
+	r3, carry = bits.Add64(r3, p11h, carry)
+	r4, carry = bits.Add64(r4, p22l, carry)
+	r5, carry = bits.Add64(r5, p22h, carry)
+	r6, carry = bits.Add64(r6, p33l, carry)
+	r7, _ = bits.Add64(r7, p33h, carry)
 
 	r8 := r7 >> 59
-	r7 = r7<<5 | r6>>59
-	r6 = r6<<5 | r5>>59
-	r5 = r5<<5 | r4>>59
-	r4 = r4<<5 | r3>>59
+	r7 = r7<<5 + r6>>59
+	r6 = r6<<5 + r5>>59
+	r5 = r5<<5 + r4>>59
+	r4 = r4<<5 + r3>>59
 
 	r3 &= P3
 
@@ -148,7 +110,99 @@ func mul(res, p1, p2 *FieldElement) {
 	res[1], carry = bits.Add64(r1, 0, carry)
 	res[2], carry = bits.Add64(r2, 0, carry)
 	res[3], _ = bits.Add64(r3, 0, carry)
+}
 
+func mul(res, p1, p2 *FieldElement) {
+	_, _ = p1[3], p2[3]
+	var r0, r1, r2, r3, r4, r5, r6, r7, carry uint64
+
+	p00h, r0 := bits.Mul64(p1[0], p2[0])
+	p01h, p01l := bits.Mul64(p1[0], p2[1])
+	p02h, p02l := bits.Mul64(p1[0], p2[2])
+	p03h, p03l := bits.Mul64(p1[0], p2[3])
+	p10h, p10l := bits.Mul64(p1[1], p2[0])
+	p11h, p11l := bits.Mul64(p1[1], p2[1])
+	p12h, p12l := bits.Mul64(p1[1], p2[2])
+	p13h, p13l := bits.Mul64(p1[1], p2[3])
+	p20h, p20l := bits.Mul64(p1[2], p2[0])
+	p21h, p21l := bits.Mul64(p1[2], p2[1])
+	p22h, p22l := bits.Mul64(p1[2], p2[2])
+	p23h, p23l := bits.Mul64(p1[2], p2[3])
+	p30h, p30l := bits.Mul64(p1[3], p2[0])
+	p31h, p31l := bits.Mul64(p1[3], p2[1])
+	p32h, p32l := bits.Mul64(p1[3], p2[2])
+	p33h, p33l := bits.Mul64(p1[3], p2[3])
+
+	r1, carry = bits.Add64(p00h, p01l, 0)
+	r2, carry = bits.Add64(p01h, p02l, carry)
+	r3, carry = bits.Add64(p02h, p03l, carry)
+	r4, carry = bits.Add64(p03h, p13l, carry)
+	r5, carry = bits.Add64(p13h, p23l, carry)
+	r6, carry = bits.Add64(p23h, p33l, carry)
+	r7, _ = bits.Add64(p33h, 0, carry)
+
+	r1, carry = bits.Add64(r1, p10l, 0)
+	r2, carry = bits.Add64(r2, p10h, carry)
+	r3, carry = bits.Add64(r3, p21l, carry)
+	r4, carry = bits.Add64(r4, p21h, carry)
+	r5, carry = bits.Add64(r5, p22h, carry)
+	r6, carry = bits.Add64(r6, p32h, carry)
+	r7, _ = bits.Add64(r7, 0, carry)
+
+	r2, carry = bits.Add64(r2, p11l, 0)
+	r3, carry = bits.Add64(r3, p11h, carry)
+	r4, carry = bits.Add64(r4, p22l, carry)
+	r5, carry = bits.Add64(r5, p32l, carry)
+	r6, carry = bits.Add64(r6, 0, carry)
+	r7, _ = bits.Add64(r7, 0, carry)
+
+	r2, carry = bits.Add64(r2, p20l, 0)
+	r3, carry = bits.Add64(r3, p12l, carry)
+	r4, carry = bits.Add64(r4, p12h, carry)
+	r5, carry = bits.Add64(r5, p31h, carry)
+	r6, carry = bits.Add64(r6, 0, carry)
+	r7, _ = bits.Add64(r7, 0, carry)
+
+	r3, carry = bits.Add64(r3, p20h, 0)
+	r4, carry = bits.Add64(r4, p30h, carry)
+	r5, carry = bits.Add64(r5, 0, carry)
+	r6, carry = bits.Add64(r6, 0, carry)
+	r7, _ = bits.Add64(r7, 0, carry)
+
+	r3, carry = bits.Add64(r3, p30l, 0)
+	r4, carry = bits.Add64(r4, p31l, carry)
+	r5, carry = bits.Add64(r5, 0, carry)
+	r6, carry = bits.Add64(r6, 0, carry)
+	r7, _ = bits.Add64(r7, 0, carry)
+
+	r8 := r7 >> 59
+	r7 = r7<<5 | r6>>59
+	r6 = r6<<5 | r5>>59
+	r5 = r5<<5 | r4>>59
+	r4 = r4<<5 | r3>>59
+
+	r3 &= P3
+
+	r4a, carry := bits.Add64(r4, r4<<3, 0)
+	r5a, carry := bits.Add64(r5, r4>>61|r5<<3, carry)
+	r6a, carry := bits.Add64(r6, r5>>61|r6<<3, carry)
+	r7a, carry := bits.Add64(r7, r6>>61|r7<<3, carry)
+	r8a, _ := bits.Add64(r8, r7>>61|r8<<3, carry)
+
+	r0, carry = bits.Add64(r0, r4a, 0)
+	r1, carry = bits.Add64(r1, r5a, carry)
+	r2, carry = bits.Add64(r2, r6a, carry)
+	r3, carry = bits.Add64(r3, r7a, carry)
+	r4, _ = bits.Add64(r8a, 0, carry)
+
+	r4 = (r4<<5 + r3>>59) * 9
+
+	r3 &= P3
+
+	res[0], carry = bits.Add64(r0, r4, 0)
+	res[1], carry = bits.Add64(r1, 0, carry)
+	res[2], carry = bits.Add64(r2, 0, carry)
+	res[3], _ = bits.Add64(r3, 0, carry)
 }
 
 func mulD(res, p2 *FieldElement) *FieldElement {

@@ -11,20 +11,22 @@ import (
 var scalar, _ = new(big.Int).SetString("5ffffff23ffffffffffff1758603537581ffffffffffffffffffffffffffff7", 16)
 
 func BenchmarkCurve1174Add(b *testing.B) {
-	var p1, p2 Point
+	var p1 Point
 	p1.Add(Base, Base)
 	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p2.Add(Base, &p1)
+		p1.Add(Base, &p1).ToAffine(&p1)
 	}
 }
 
 func BenchmarkCurve1174Double(b *testing.B) {
 	var p Point
+	p.Double(Base)
+	b.ResetTimer()
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p.Double(Base)
+		p.Double(&p).ToAffine(&p)
 	}
 }
 
@@ -75,9 +77,10 @@ func BenchmarkCurveP256ScalarMult(b *testing.B) {
 	p256 := elliptic.P256()
 	params := p256.Params()
 	bytes := scalar.Bytes()
+	x, y := p256.ScalarMult(params.Gx, params.Gy, bytes)
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		p256.ScalarMult(params.Gx, params.Gy, bytes)
+		x, y = p256.ScalarMult(x, y, bytes)
 	}
 }
 
@@ -150,7 +153,7 @@ func BenchmarkMul(b *testing.B) {
 	}
 }
 
-func BenchmarkMulSqr(b *testing.B) {
+func BenchmarkSqr(b *testing.B) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	var p, p2, p3 FieldElement
 	p[0] = r.Uint64()

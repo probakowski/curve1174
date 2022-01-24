@@ -642,10 +642,10 @@ func mulFunc() {
 }
 
 func extendedMod() {
-	r8 := GP64()
+	r8, r4a := GP64(), GP64()
 
-	MOVQ(regs[4], r8)
-	SHLQ(Imm(5), r8)
+	MOVQ(regs[7], r8)
+	SHRQ(Imm(59), r8)
 	SHLQ(Imm(5), regs[6], regs[7])
 	SHLQ(Imm(5), regs[5], regs[6])
 	SHLQ(Imm(5), regs[4], regs[5])
@@ -655,15 +655,15 @@ func extendedMod() {
 	MOVQ(Imm(0x07ffffffffffffff), andReg)
 	ANDQ(andReg, regs[3])
 
-	r4a := GP64()
-	MOVQ(regs[4], r4a)
-	SHLQ(Imm(3), r4a)
+	XORQ(r4a, r4a)
 
 	ADDQ(regs[4], regs[0])
 	ADCQ(regs[5], regs[1])
 	ADCQ(regs[6], regs[2])
 	ADCQ(regs[7], regs[3])
+	ADCQ(r8, r4a)
 
+	SHLQ(Imm(3), regs[7], r8)
 	SHLQ(Imm(3), regs[6], regs[7])
 	SHLQ(Imm(3), regs[5], regs[6])
 	SHLQ(Imm(3), regs[4], regs[5])
@@ -673,9 +673,18 @@ func extendedMod() {
 	ADCQ(regs[5], regs[1])
 	ADCQ(regs[6], regs[2])
 	ADCQ(regs[7], regs[3])
+	ADCQ(r8, r4a)
 
-	Comment("Mod 2nd stage")
-	mod()
+	SHLQ(Imm(5), regs[3], r4a)
+
+	ANDQ(andReg, regs[3])
+
+	LEAQ(Mem{Base: r4a, Index: r4a, Scale: 8}, r4a)
+
+	ADDQ(r4a, regs[0])
+	ADCQ(Imm(0), regs[1])
+	ADCQ(Imm(0), regs[2])
+	ADCQ(Imm(0), regs[3])
 }
 
 func carry(start, end int) {
