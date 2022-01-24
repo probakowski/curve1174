@@ -3,6 +3,7 @@
 package curve1174
 
 import (
+	"crypto/subtle"
 	"fmt"
 	"math/bits"
 )
@@ -208,14 +209,22 @@ func mod(res, p *FieldElement) {
 func selectPoint(res *Point, table *[16]Point, index uint64) {
 	res.Set(&Point{X: UZero, Y: UZero, Z: UZero, T: UZero})
 	for i := 0; i < 16; i++ {
-		_, b1 := bits.Sub64(index, uint64(i), 0)
-		_, b2 := bits.Sub64(uint64(i), index, 0)
-		b1 = (b1 | b2) - 1
-		for j := 0; j < 4; j++ {
-			res.X[j] |= table[i].X[j] & b1
-			res.Y[j] |= table[i].Y[j] & b1
-			res.Z[j] |= table[i].Z[j] & b1
-			res.T[j] |= table[i].T[j] & b1
-		}
+		b1 := ^(uint64(subtle.ConstantTimeEq(int32(index), int32(i))) - 1)
+		res.X[0] |= table[i].X[0] & b1
+		res.X[1] |= table[i].X[1] & b1
+		res.X[2] |= table[i].X[2] & b1
+		res.X[3] |= table[i].X[3] & b1
+		res.Y[0] |= table[i].Y[0] & b1
+		res.Y[1] |= table[i].Y[1] & b1
+		res.Y[2] |= table[i].Y[2] & b1
+		res.Y[3] |= table[i].Y[3] & b1
+		res.T[0] |= table[i].T[0] & b1
+		res.T[1] |= table[i].T[1] & b1
+		res.T[2] |= table[i].T[2] & b1
+		res.T[3] |= table[i].T[3] & b1
+		res.Z[0] |= table[i].Z[0] & b1
+		res.Z[1] |= table[i].Z[1] & b1
+		res.Z[2] |= table[i].Z[2] & b1
+		res.Z[3] |= table[i].Z[3] & b1
 	}
 }

@@ -114,26 +114,28 @@ TEXT ·mul(SB), NOSPLIT, $0-24
 	ADCXQ AX, R9
 	ADOXQ AX, R10
 	ADCXQ AX, R10
-
-	// Mod 1st stage
-	SHLQ $0x05, R9, R10
-	SHLQ $0x05, R8, R9
-	SHLQ $0x05, DI, R8
-	SHLQ $0x05, SI, DI
-	MOVQ $0x07ffffffffffffff, AX
-	ANDQ AX, SI
-	ADDQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	ADCQ R10, SI
-	SHLQ $0x03, R9, R10
-	SHLQ $0x03, R8, R9
-	SHLQ $0x03, DI, R8
-	SHLQ $0x03, DI
-	ADDQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	ADCQ R10, SI
+	MOVQ  DI, AX
+	SHLQ  $0x05, AX
+	SHLQ  $0x05, R9, R10
+	SHLQ  $0x05, R8, R9
+	SHLQ  $0x05, DI, R8
+	SHLQ  $0x05, SI, DI
+	MOVQ  $0x07ffffffffffffff, AX
+	ANDQ  AX, SI
+	MOVQ  DI, AX
+	SHLQ  $0x03, AX
+	ADDQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	ADCQ  R10, SI
+	SHLQ  $0x03, R9, R10
+	SHLQ  $0x03, R8, R9
+	SHLQ  $0x03, DI, R8
+	SHLQ  $0x03, DI
+	ADDQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	ADCQ  R10, SI
 
 	// Mod 2nd stage
 	MOVQ SI, R10
@@ -280,26 +282,28 @@ mulNoAdx:
 	ADCQ  $0x00, R8
 	ADCQ  $0x00, R9
 	ADCQ  $0x00, R10
-
-	// Mod 1st stage
-	SHLQ $0x05, R9, R10
-	SHLQ $0x05, R8, R9
-	SHLQ $0x05, DI, R8
-	SHLQ $0x05, SI, DI
-	MOVQ $0x07ffffffffffffff, AX
-	ANDQ AX, SI
-	ADDQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	ADCQ R10, SI
-	SHLQ $0x03, R9, R10
-	SHLQ $0x03, R8, R9
-	SHLQ $0x03, DI, R8
-	SHLQ $0x03, DI
-	ADDQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	ADCQ R10, SI
+	MOVQ  DI, AX
+	SHLQ  $0x05, AX
+	SHLQ  $0x05, R9, R10
+	SHLQ  $0x05, R8, R9
+	SHLQ  $0x05, DI, R8
+	SHLQ  $0x05, SI, DI
+	MOVQ  $0x07ffffffffffffff, AX
+	ANDQ  AX, SI
+	MOVQ  DI, AX
+	SHLQ  $0x03, AX
+	ADDQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	ADCQ  R10, SI
+	SHLQ  $0x03, R9, R10
+	SHLQ  $0x03, R8, R9
+	SHLQ  $0x03, DI, R8
+	SHLQ  $0x03, DI
+	ADDQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	ADCQ  R10, SI
 
 	// Mod 2nd stage
 	MOVQ SI, R10
@@ -448,26 +452,28 @@ TEXT ·mulNoAdx(SB), NOSPLIT, $0-24
 	ADCQ  $0x00, R8
 	ADCQ  $0x00, R9
 	ADCQ  $0x00, R10
-
-	// Mod 1st stage
-	SHLQ $0x05, R9, R10
-	SHLQ $0x05, R8, R9
-	SHLQ $0x05, DI, R8
-	SHLQ $0x05, SI, DI
-	MOVQ $0x07ffffffffffffff, AX
-	ANDQ AX, SI
-	ADDQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	ADCQ R10, SI
-	SHLQ $0x03, R9, R10
-	SHLQ $0x03, R8, R9
-	SHLQ $0x03, DI, R8
-	SHLQ $0x03, DI
-	ADDQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	ADCQ R10, SI
+	MOVQ  DI, AX
+	SHLQ  $0x05, AX
+	SHLQ  $0x05, R9, R10
+	SHLQ  $0x05, R8, R9
+	SHLQ  $0x05, DI, R8
+	SHLQ  $0x05, SI, DI
+	MOVQ  $0x07ffffffffffffff, AX
+	ANDQ  AX, SI
+	MOVQ  DI, AX
+	SHLQ  $0x03, AX
+	ADDQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	ADCQ  R10, SI
+	SHLQ  $0x03, R9, R10
+	SHLQ  $0x03, R8, R9
+	SHLQ  $0x03, DI, R8
+	SHLQ  $0x03, DI
+	ADDQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	ADCQ  R10, SI
 
 	// Mod 2nd stage
 	MOVQ SI, R10
@@ -547,32 +553,25 @@ TEXT ·mod(SB), NOSPLIT, $0-16
 	RET
 
 // func mul2(res *FieldElement, x *FieldElement)
-// Requires: CMOV
 TEXT ·mul2(SB), NOSPLIT, $0-16
-	MOVQ    x+8(FP), BX
-	MOVQ    (BX), AX
-	MOVQ    8(BX), CX
-	MOVQ    16(BX), DX
-	MOVQ    24(BX), BX
-	SHLQ    $0x01, DX, BX
-	SHLQ    $0x01, CX, DX
-	SHLQ    $0x01, AX, CX
-	SHLQ    $0x01, AX
-	MOVQ    $0xffffffffffffffff, R10
-	MOVQ    $0xfffffffffffffff7, R9
-	MOVQ    $0x07ffffffffffffff, R11
-	MOVQ    AX, BP
-	MOVQ    CX, SI
-	MOVQ    DX, DI
-	MOVQ    BX, R8
-	SUBQ    R9, BP
-	SBBQ    R10, SI
-	SBBQ    R10, DI
-	SBBQ    R11, R8
-	CMOVQCC BP, AX
-	CMOVQCC SI, CX
-	CMOVQCC DI, DX
-	CMOVQCC R8, BX
+	MOVQ x+8(FP), BX
+	MOVQ (BX), AX
+	MOVQ 8(BX), CX
+	MOVQ 16(BX), DX
+	MOVQ 24(BX), BX
+	ADDQ AX, AX
+	ADCQ CX, CX
+	ADCQ DX, DX
+	ADCQ BX, BX
+	SBBQ BP, BP
+	ANDL $0x00000120, BP
+	ADDQ BP, AX
+	ADCQ $0x00, CX
+	ADCQ $0x00, DX
+	ADCQ $0x00, BX
+	SBBQ BP, BP
+	ANDL $0x00000120, BP
+	ADDQ BP, AX
 
 	// Store results
 	MOVQ res+0(FP), BP
@@ -611,20 +610,19 @@ TEXT ·sub(SB), NOSPLIT, $0-24
 	MOVQ 8(BX), CX
 	MOVQ 16(BX), DX
 	MOVQ 24(BX), BX
-	XORQ SI, SI
 	SUBQ (BP), AX
 	SBBQ 8(BP), CX
 	SBBQ 16(BP), DX
 	SBBQ 24(BP), BX
-	SBBQ $0x00, SI
-	MOVQ $0xfffffffffffffff7, BP
-	ANDQ SI, BP
-	MOVQ $0x07ffffffffffffff, DI
-	ANDQ SI, DI
-	ADDQ BP, AX
-	ADCQ SI, CX
-	ADCQ SI, DX
-	ADCQ DI, BX
+	SBBQ BP, BP
+	ANDL $0x00000120, BP
+	SUBQ BP, AX
+	SBBQ $0x00, CX
+	SBBQ $0x00, DX
+	SBBQ $0x00, BX
+	SBBQ BP, BP
+	ANDL $0x00000120, BP
+	SUBQ BP, AX
 
 	// Store results
 	MOVQ res+0(FP), BP
@@ -635,34 +633,27 @@ TEXT ·sub(SB), NOSPLIT, $0-24
 	RET
 
 // func add(res *FieldElement, x *FieldElement, y *FieldElement)
-// Requires: CMOV
 TEXT ·add(SB), NOSPLIT, $0-24
-	MOVQ    x+8(FP), BX
-	MOVQ    y+16(FP), BP
-	MOVQ    res+0(FP), AX
-	MOVQ    (BX), AX
-	MOVQ    8(BX), CX
-	MOVQ    16(BX), DX
-	MOVQ    24(BX), BX
-	ADDQ    (BP), AX
-	ADCQ    8(BP), CX
-	ADCQ    16(BP), DX
-	ADCQ    24(BP), BX
-	MOVQ    $0xffffffffffffffff, R10
-	MOVQ    $0xfffffffffffffff7, R9
-	MOVQ    $0x07ffffffffffffff, R11
-	MOVQ    AX, BP
-	MOVQ    CX, SI
-	MOVQ    DX, DI
-	MOVQ    BX, R8
-	SUBQ    R9, BP
-	SBBQ    R10, SI
-	SBBQ    R10, DI
-	SBBQ    R11, R8
-	CMOVQCC BP, AX
-	CMOVQCC SI, CX
-	CMOVQCC DI, DX
-	CMOVQCC R8, BX
+	MOVQ x+8(FP), BX
+	MOVQ y+16(FP), BP
+	MOVQ res+0(FP), AX
+	MOVQ (BX), AX
+	MOVQ 8(BX), CX
+	MOVQ 16(BX), DX
+	MOVQ 24(BX), BX
+	ADDQ (BP), AX
+	ADCQ 8(BP), CX
+	ADCQ 16(BP), DX
+	ADCQ 24(BP), BX
+	SBBQ BP, BP
+	ANDL $0x00000120, BP
+	ADDQ BP, AX
+	ADCQ $0x00, CX
+	ADCQ $0x00, DX
+	ADCQ $0x00, BX
+	SBBQ BP, BP
+	ANDL $0x00000120, BP
+	ADDQ BP, AX
 
 	// Store results
 	MOVQ res+0(FP), BP
@@ -706,26 +697,28 @@ TEXT ·mulD(SB), NOSPLIT, $0-16
 	ADCXQ R10, SI
 	ADOXQ R10, DI
 	ADCXQ R10, DI
-
-	// Mod 1st stage
-	SHLQ $0x05, R8, R9
-	SHLQ $0x05, DI, R8
-	SHLQ $0x05, SI, DI
-	SHLQ $0x05, BP, SI
-	MOVQ $0x07ffffffffffffff, DX
-	ANDQ DX, BP
-	ADDQ SI, AX
-	ADCQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	SHLQ $0x03, R8, R9
-	SHLQ $0x03, DI, R8
-	SHLQ $0x03, SI, DI
-	SHLQ $0x03, SI
-	ADDQ SI, AX
-	ADCQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
+	MOVQ  SI, DX
+	SHLQ  $0x05, DX
+	SHLQ  $0x05, R8, R9
+	SHLQ  $0x05, DI, R8
+	SHLQ  $0x05, SI, DI
+	SHLQ  $0x05, BP, SI
+	MOVQ  $0x07ffffffffffffff, DX
+	ANDQ  DX, BP
+	MOVQ  SI, DX
+	SHLQ  $0x03, DX
+	ADDQ  SI, AX
+	ADCQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	SHLQ  $0x03, R8, R9
+	SHLQ  $0x03, DI, R8
+	SHLQ  $0x03, SI, DI
+	SHLQ  $0x03, SI
+	ADDQ  SI, AX
+	ADCQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
 
 	// Mod 2nd stage
 	MOVQ BP, R9
@@ -1048,26 +1041,28 @@ TEXT ·sqr(SB), NOSPLIT, $0-16
 	MULXQ R12, R10, DX
 	ADCQ  R10, R8
 	ADCQ  DX, R9
-
-	// Mod 1st stage
-	SHLQ $0x05, R8, R9
-	SHLQ $0x05, DI, R8
-	SHLQ $0x05, SI, DI
-	SHLQ $0x05, BP, SI
-	MOVQ $0x07ffffffffffffff, DX
-	ANDQ DX, BP
-	ADDQ SI, AX
-	ADCQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
-	SHLQ $0x03, R8, R9
-	SHLQ $0x03, DI, R8
-	SHLQ $0x03, SI, DI
-	SHLQ $0x03, SI
-	ADDQ SI, AX
-	ADCQ DI, CX
-	ADCQ R8, BX
-	ADCQ R9, BP
+	MOVQ  SI, DX
+	SHLQ  $0x05, DX
+	SHLQ  $0x05, R8, R9
+	SHLQ  $0x05, DI, R8
+	SHLQ  $0x05, SI, DI
+	SHLQ  $0x05, BP, SI
+	MOVQ  $0x07ffffffffffffff, DX
+	ANDQ  DX, BP
+	MOVQ  SI, DX
+	SHLQ  $0x03, DX
+	ADDQ  SI, AX
+	ADCQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
+	SHLQ  $0x03, R8, R9
+	SHLQ  $0x03, DI, R8
+	SHLQ  $0x03, SI, DI
+	SHLQ  $0x03, SI
+	ADDQ  SI, AX
+	ADCQ  DI, CX
+	ADCQ  R8, BX
+	ADCQ  R9, BP
 
 	// Mod 2nd stage
 	MOVQ BP, R9

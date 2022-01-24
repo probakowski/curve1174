@@ -28,8 +28,8 @@ var E = &Point{
 type Point struct {
 	X FieldElement
 	Y FieldElement
-	Z FieldElement
 	T FieldElement
+	Z FieldElement
 }
 
 //Set p to be exactly the same as p2
@@ -88,8 +88,7 @@ func (p *Point) Equals(p2 *Point) bool {
 }
 
 //ScalarMult multiplies point on curve sp by scalar b (b<2^251-9) and stores result in p. Execution time doesn't depend on b.
-func (p *Point) ScalarMult(sp *Point,
-	b *FieldElement) *Point {
+func (p *Point) ScalarMult(sp *Point, b *FieldElement) *Point {
 	el := [16]Point{*E, *sp}
 	p.Set(E)
 	el[2].Double(sp)

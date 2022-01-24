@@ -90,25 +90,6 @@ func BenchmarkCurveP256ScalarBaseMult(b *testing.B) {
 	}
 }
 
-func BenchmarkCurveP521ScalarMult(b *testing.B) {
-	p521 := elliptic.P521()
-	params := p521.Params()
-	bytes := scalar.Bytes()
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		p521.ScalarMult(params.Gx, params.Gy, bytes)
-	}
-}
-
-func BenchmarkCurveP521ScalarBaseMult(b *testing.B) {
-	p521 := elliptic.P521()
-	bytes := scalar.Bytes()
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		p521.ScalarBaseMult(bytes)
-	}
-}
-
 func BenchmarkMod(b *testing.B) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	var p, p2 FieldElement
@@ -266,6 +247,25 @@ func BenchmarkMul2(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		mul2(&p2, &p)
+	}
+}
+
+func BenchmarkSelect(b *testing.B) {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	var t [16]Point
+	var res Point
+	for i := 0; i < 16; i++ {
+		for j := 0; j < 4; j++ {
+			t[i].X[j] = r.Uint64()
+			t[i].Y[j] = r.Uint64()
+			t[i].T[j] = r.Uint64()
+			t[i].Z[j] = r.Uint64()
+		}
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		selectPoint(&res, &t, 0)
 	}
 }
 

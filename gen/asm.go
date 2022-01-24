@@ -16,7 +16,7 @@ var storedX, storedY = -1, -1
 var lastX int
 
 func main() {
-	Package("przemko-robakowski.pl/curve1174")
+	Package("github.com/probakowski/curve1174")
 	ConstraintExpr("!curve1174_purego")
 
 	for i := 0; i < 8; i++ {
@@ -196,7 +196,7 @@ func selectFunc() {
 	targetIndex := Load(Param("index"), XMM())
 	xPtr = Load(Param("table"), GP64())
 	resPtr = Load(Param("res"), GP64())
-	var res [8]Register
+	var res [8]VecVirtual
 	for i := 0; i < 8; i++ {
 		res[i] = XMM()
 	}
@@ -206,6 +206,7 @@ func selectFunc() {
 	for i := 0; i < 8; i++ {
 		PXOR(res[i], res[i])
 	}
+
 	MOVQ(U64(16), index)
 	PCMPEQL(currentIndex, currentIndex)
 	PXOR(one, one)
@@ -249,7 +250,18 @@ func addFunc() {
 		ADCQ(mem(yPtr, i), regs[i])
 	}
 
-	subN()
+	q := GP64()
+	SBBQ(q, q)
+	ANDL(U32(288), q.As32())
+
+	ADDQ(q, regs[0])
+	ADCQ(Imm(0), regs[1])
+	ADCQ(Imm(0), regs[2])
+	ADCQ(Imm(0), regs[3])
+
+	SBBQ(q, q)
+	ANDL(U32(288), q.As32())
+	ADDQ(q, regs[0])
 
 	storeResults()
 	RET()
@@ -266,26 +278,23 @@ func subFunc() {
 		MOVQ(mem(xPtr, i), regs[i])
 	}
 
-	b := GP64()
-	n0 := GP64()
-	n3 := GP64()
-	XORQ(b, b)
-
 	SUBQ(mem(yPtr, 0), regs[0])
 	for i := 1; i < 4; i++ {
 		SBBQ(mem(yPtr, i), regs[i])
 	}
 
-	SBBQ(Imm(0), b)
-	MOVQ(Imm(0xfffffffffffffff7), n0)
-	ANDQ(b, n0)
-	MOVQ(Imm(0x07ffffffffffffff), n3)
-	ANDQ(b, n3)
+	q := GP64()
+	SBBQ(q, q)
+	ANDL(U32(288), q.As32())
 
-	ADDQ(n0, regs[0])
-	ADCQ(b, regs[1])
-	ADCQ(b, regs[2])
-	ADCQ(n3, regs[3])
+	SUBQ(q, regs[0])
+	SBBQ(Imm(0), regs[1])
+	SBBQ(Imm(0), regs[2])
+	SBBQ(Imm(0), regs[3])
+
+	SBBQ(q, q)
+	ANDL(U32(288), q.As32())
+	SUBQ(q, regs[0])
 
 	storeResults()
 
@@ -364,12 +373,23 @@ func mul2Func() {
 		MOVQ(mem(xPtr, i), regs[i])
 	}
 
-	for i := 3; i >= 1; i-- {
-		SHLQ(Imm(1), regs[i-1], regs[i])
-	}
-	SHLQ(Imm(1), regs[0])
+	ADDQ(regs[0], regs[0])
+	ADCQ(regs[1], regs[1])
+	ADCQ(regs[2], regs[2])
+	ADCQ(regs[3], regs[3])
 
-	subN()
+	q := GP64()
+	SBBQ(q, q)
+	ANDL(U32(288), q.As32())
+
+	ADDQ(q, regs[0])
+	ADCQ(Imm(0), regs[1])
+	ADCQ(Imm(0), regs[2])
+	ADCQ(Imm(0), regs[3])
+
+	SBBQ(q, q)
+	ANDL(U32(288), q.As32())
+	ADDQ(q, regs[0])
 
 	storeResults()
 
@@ -622,7 +642,10 @@ func mulFunc() {
 }
 
 func extendedMod() {
-	Comment("Mod 1st stage")
+	r8 := GP64()
+
+	MOVQ(regs[4], r8)
+	SHLQ(Imm(5), r8)
 	SHLQ(Imm(5), regs[6], regs[7])
 	SHLQ(Imm(5), regs[5], regs[6])
 	SHLQ(Imm(5), regs[4], regs[5])
@@ -631,6 +654,10 @@ func extendedMod() {
 	andReg := GP64()
 	MOVQ(Imm(0x07ffffffffffffff), andReg)
 	ANDQ(andReg, regs[3])
+
+	r4a := GP64()
+	MOVQ(regs[4], r4a)
+	SHLQ(Imm(3), r4a)
 
 	ADDQ(regs[4], regs[0])
 	ADCQ(regs[5], regs[1])
